@@ -6,6 +6,7 @@ if __name__ == '__main__':
 from worlds.game_objects import Actions
 import random, math, os
 import numpy as np
+from reward_machines.env_reward_machine import EnvRewardMachine
 
 """
 Auxiliary class with the configuration parameters that the Game class needs
@@ -19,16 +20,34 @@ class OfficeWorld:
     def __init__(self, params):
         self._load_map()
         self.env_game_over = False
+        self.rm_file = "../experiments/office/reward_machines/t1.txt"
+        self.env_rm = EnvRewardMachine(self.rm_file)
+        self.current_state = self.get_state()#get the initial reward machine and MDP state
+        self.u1 = self.env_rm.get_initial_state()
+
 
     def get_is_done(self):
         return self.env_game_over
     def execute_action(self, a):
         """
         We execute 'action' in the game
+        return reward and done
         """
         x,y = self.agent
         # executing action
         self.agent = self.xy_MDP_slip(a,0.9) # progresses in x-y system
+        u1 = self.u1
+        s1 = self.get_state()
+        events = self.get_events()#get conditions of the game
+        u2 = self.env_rm.get_next_state(u1, events)#get the next state
+        s2 = self.get_state()
+        reward = self.env_rm.get_reward(u1,u2,s1,a,s2)#use the reward machine to generate the rewards
+        next_state = s2
+        self.u1 = u2
+        self.current_state = next_state
+        done = self.get_is_done()
+        return reward,done
+
 
     def xy_MDP_slip(self,a,p):
         x,y = self.agent
@@ -99,7 +118,7 @@ class OfficeWorld:
         return ret
 
     def get_state(self):
-        return None # we are only using "simple reward machines" for the craft domain
+        return self.agent[0]*9 + self.agent[1] + 1#the plus one eliminates the 0 tile. states go from 1 to 108
 
     # The following methods return different feature representations of the map ------------
     def get_features(self):

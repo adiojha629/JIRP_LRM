@@ -35,7 +35,6 @@ def run_lrm(env_params, lp, rl):
     reward_total = 0
     last_reward  = 0
     step = 0
-    current_state = rm.get_initial_state()
     # Collecting random traces for learning the reward machine
     print("Collecting random traces...")
     while step < lp.rm_init_steps:
@@ -45,11 +44,7 @@ def run_lrm(env_params, lp, rl):
         for _ in range(lp.episode_horizon):
             # executing a random action
             a = random.choice(actions)
-            #env.get_events returns reward and done. we will get this from separate
-            next_state = rm.get_next_state(current_state,)
-            reward = rm.get_reward()
-            done = env.get_is_done()
-            #reward, done = env.execute_action(a)
+            reward, done = env.execute_action(a)
             o2_events = env.get_events()
             reward_total += reward
             trace.append((o2_events,reward))
