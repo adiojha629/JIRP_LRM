@@ -40,7 +40,7 @@ class Game:
         We execute 'action' in the game
         Returns the reward
         """
-        self.game.execute_action(action)
+        return self.game.execute_action(action)
 
     def get_actions(self):
         """

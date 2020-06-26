@@ -5,6 +5,7 @@ if __name__ == '__main__':
 
 from reward_machines.reward_functions import *
 from reward_machines.reward_machine_utils import evaluate_dnf, are_these_machines_equivalent
+import os.path
 
 class EnvRewardMachine:
     def __init__(self,file):
@@ -90,6 +91,10 @@ class EnvRewardMachine:
             (2,2,'True',ConstantRewardFunction(0))
         """
         # Reading the file
+        #print(os.path.abspath(file))
+        file = os.path.abspath(file)
+        #print(file)
+        #print(os.path.isfile(file))
         f = open(file)
         lines = [l.rstrip() for l in f]
         f.close()

@@ -24,6 +24,7 @@ class OfficeWorld:
         self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()#get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
+        self.actions = [Actions.up.value,Actions.right.value,Actions.down.value,Actions.left.value]
 
 
     def get_is_done(self):
@@ -223,7 +224,6 @@ class OfficeWorld:
             self.forbidden_transitions.remove((x,3,Actions.down))
         # Adding the agent
         self.agent = (2,1)
-        self.actions = [Actions.up.value,Actions.right.value,Actions.down.value,Actions.left.value]
         
 def play():
     from reward_machines.reward_machine import RewardMachine
@@ -233,10 +233,10 @@ def play():
     params = OfficeWorldParams()
 
     # play the game!
-    tasks = ["../../experiments/office/reward_machines/t%d.txt"%i for i in [1,2,3,4]]
+    tasks = ["../experiments/office/reward_machines/t%d.txt"%i for i in [1,2,3,4]]
     reward_machines = []
     for t in tasks:
-        reward_machines.append(RewardMachine(t))
+        reward_machines.append(EnvRewardMachine(t))
     for i in range(len(tasks)):
         print("Running", tasks[i])
 
@@ -286,7 +286,59 @@ def play():
                 print("Forbidden action")
         game.show()
         print("Events:", game.get_true_propositions())
-    
+
+def test_env():
+    params = OfficeWorldParams()
+    game = OfficeWorld(params)
+    #Print out the map so we can see where the agent is
+    game.show()
+    #Show the state of the reward machine
+    print("State of reward machine is " + str(game.u1))
+
+    #Show the Reward at this state
+    print("Reward at THIS STATE is "+ str(game.env_rm.get_reward(game.u1,game.u1)))
+    print("State of MDP is " + str(game.current_state))
+    #have the variable 'total_reward' keep track of all the rewards given
+    total_reward = game.env_rm.get_reward(game.u1,game.u1)
+    print("The total reward given is " + str(total_reward))
+
+    print(game.get_reward_list())
+
+    #dictionary to parse input
+    act_to_num = {"w":0,"d":1,"s":2,"a":3}
+
+    #vars we need
+    nxt_state = game.u1
+    reward = 0
+    done = False
+    info = {}
+
+    while not done:
+      #ask for user input
+      act = input("Action? (w,a,s,d)")
+      #Check if the action is valid
+      if(act in act_to_num):
+        #then do that action
+        nxt_state,reward,done,info = game.step(act_to_num[act])
+      else:
+        print("Invalid action")
+      #Show game map, states and rewards
+      game.show()
+      """
+      print(nxt_state)
+      print(str(type(nxt_state)))
+      print(reward)
+      print(str(type(reward)))
+      """
+      print("State of reward machine is " + str(game.u1))
+      print("State of MDP is " + str(game.current_state))
+      print("Reward at THIS STATE is " + str(reward))
+      total_reward = total_reward + reward
+      print("The total reward given is " + str(total_reward))
+      print(game.get_reward_list())
+      print("The current state is " + str(nxt_state)) #the nxt_state is the output of step. It is the state that the agent currently is in
+      print(game.get_events())
 # This code allow to play a game (for debugging purposes)
 if __name__ == '__main__':
-    play()
+    #play()
+    test_env()

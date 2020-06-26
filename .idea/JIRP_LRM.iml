@@ -16,6 +16,13 @@
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/tester_policybank" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/testerHRL" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/worlds" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/.idea" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/__MACOSX" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/experiments" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/plotdata" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/scripts" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/tmp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/venv" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (venv)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

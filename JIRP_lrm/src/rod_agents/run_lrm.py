@@ -44,6 +44,7 @@ def run_lrm(env_params, lp, rl):
         for _ in range(lp.episode_horizon):
             # executing a random action
             a = random.choice(actions)
+            #print(env)
             reward, done = env.execute_action(a)
             o2_events = env.get_events()
             reward_total += reward
