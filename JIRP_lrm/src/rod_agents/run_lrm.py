@@ -49,7 +49,7 @@ def run_lrm(env_params, lp, rl):
             next_state = rm.get_next_state(current_state,)
             reward = rm.get_reward()
             done = env.get_is_done()
-            reward, done = env.execute_action(a)
+            #reward, done = env.execute_action(a)
             o2_events = env.get_events()
             reward_total += reward
             trace.append((o2_events,reward))
