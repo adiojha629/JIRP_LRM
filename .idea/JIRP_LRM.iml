@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/automata_learning" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/automata_learning_utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/automata_learning_with_policybank" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/baselines" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/common" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/hrl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/qrm" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/reward_machines" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/rod_agents" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/tester" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/tester_policybank" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/testerHRL" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/src/worlds" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="Python 3.8 (venv)" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
