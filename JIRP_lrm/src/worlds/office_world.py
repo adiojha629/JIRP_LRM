@@ -26,7 +26,19 @@ class OfficeWorld:
         self.u1 = self.env_rm.get_initial_state()
         self.actions = [Actions.up.value,Actions.right.value,Actions.down.value,Actions.left.value]
 
-
+    def get_perfect_rm(self):
+        # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
+        delta_u = {}
+        delta_u[(0, '3B')] = 1
+        delta_u[(1, '0c')] = 2
+        delta_u[(1, '2')]  = 2
+        delta_u[(1, '2c')] = 3
+        delta_u[(1, '0')]  = 3
+        delta_u[(2, '3B')] = 1
+        delta_u[(2, '0C')] = 0
+        delta_u[(3, '3B')] = 1
+        delta_u[(3, '2C')] = 0
+        return delta_u
     def get_is_done(self):
         return self.env_game_over
     def execute_action(self, a):

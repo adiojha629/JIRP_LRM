@@ -84,7 +84,7 @@ def run_lrm(env_params, lp, rl):
                 print("Learning a policy for the current RM...")
                 if rl == "dqn":
                     policy = DQN(lp, len(o1_features), len(actions), rm)
-                elif rl == "qrm":
+                elif rl == "qrm" or rl == "lrm_qrm":
                     policy = QRM(lp, len(o1_features), len(actions), rm)
                 else:
                     assert False, "RL approach is not supported yet"

@@ -74,7 +74,10 @@ class Game:
     def get_state_and_features(self):
         return self.get_state(), self.get_features()
     def get_perfect_rm(self):
-        return 0
+        """
+        Returns a perfect RM for this domain
+        """
+        return self.game.get_perfect_rm()
     def get_events(self):
         """
         Returns the string with the propositions that are True in this state
