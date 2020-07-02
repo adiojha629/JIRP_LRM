@@ -232,7 +232,7 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
         rl = 'lrm-qrm'
         env = "office_world"
         n_seed = 0
-        n_workers = 1
+        n_workers = 16
         run_lrm_agent(rl,env,n_seed,n_workers)
 
 
@@ -249,7 +249,7 @@ def run_lrm_agent(rl, env, n_seed, n_workers):
 
     lp.set_rm_learning(rm_init_steps=200e3, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
-    lp.set_rl_parameters(gamma=0.9, train_steps=int(2e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=None)
+    lp.set_rl_parameters(gamma=0.9, train_steps=int(2e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(2e6))
     lp.set_test_parameters(test_freq = int(1e4))
     lp.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,
                     buffer_size = 100000, batch_size = 32, use_double_dqn = True, num_hidden_layers = 5, num_neurons = 64)
