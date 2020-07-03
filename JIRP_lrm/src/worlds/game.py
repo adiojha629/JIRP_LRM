@@ -14,7 +14,7 @@ class GameParams:
             exit()
 
 class Game:
-
+#note that not all methods are defined in officeworld; some methods may not be needed. they are included here for the sake of being consistant with rodrigo's code
     def __init__(self, params):
         self.params = params
         self.restart()
@@ -36,7 +36,6 @@ class Game:
         Returns the reward
         """
         return self.game.execute_action(action)
-
     def get_actions(self):
         """
         Returns the list with the actions that the agent can perform
@@ -65,7 +64,11 @@ class Game:
     # The following methods return different feature representations of the map ------------
     def get_features(self):
         return self.game.get_features()
-    
+    def get_optimal_action(self):
+        """
+        HACK: returns the best possible action given current state
+        """
+        return self.game.get_optimal_action()
     def get_state_and_features(self):
         return self.get_state(), self.get_features()
     def get_perfect_rm(self):
@@ -80,3 +83,11 @@ class Game:
         return self.game.get_events()
     def get_is_done(self):
         return self.game.get_is_done()
+    def get_all_events(self):
+        """
+        Returns a string with all the possible events that may occur in the environment
+        """
+        return self.game.get_all_events()
+    def get_location(self):
+        # this auxiliary method allows to keep track of the agent's movements
+        return self.game.get_location()

@@ -14,6 +14,7 @@ class GridWorldParams:
 class GridWorld:
 
     def __init__(self, params):
+        print(params.file_map)
         self._load_map(params.file_map)
         self.movement_noise = params.movement_noise
         self.u  = 0
