@@ -230,7 +230,8 @@ class OfficeWorld:
             self.forbidden_transitions.remove((x,3,Actions.down))
         # Adding the agent
         self.agent = (2,1)
-        
+
+#play is an old function used for debugging office world; use test_env() instead
 def play():
     from reward_machines.reward_machine import RewardMachine
 
@@ -293,6 +294,7 @@ def play():
         game.show()
         print("Events:", game.get_true_propositions())
 
+#this method is for debugging. If you create a new method and want to see what it returns, add code here, then click run
 def test_env():
     params = OfficeWorldParams()
     game = OfficeWorld(params)
@@ -309,23 +311,18 @@ def test_env():
     print("The total reward given is " + str(total_reward))
 
     #print(game.get_reward_list())
+    print("Game.getfeaures() returns")
     print(game.get_features())
     #dictionary to parse input
     act_to_num = {"w":0,"d":1,"s":2,"a":3}
-
-    #vars we need
-    nxt_state = game.u1
-    reward = 0
-    done = False
-    info = {}
-
+    done = False #since the game has started we know that the game is not done
     while not done:
       #ask for user input
       act = input("Action? (w,a,s,d)")
       #Check if the action is valid
       if(act in act_to_num):
         #then do that action
-        nxt_state,reward,done,info = game.step(act_to_num[act])
+        reward, done = game.execute_action(act_to_num[act])
       else:
         print("Invalid action")
       #Show game map, states and rewards
@@ -341,10 +338,10 @@ def test_env():
       print("Reward at THIS STATE is " + str(reward))
       total_reward = total_reward + reward
       print("The total reward given is " + str(total_reward))
-      print(game.get_reward_list())
-      print("The current state is " + str(nxt_state)) #the nxt_state is the output of step. It is the state that the agent currently is in
-      print(game.get_events())
+      print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+      print(game.get_features())
 # This code allow to play a game (for debugging purposes)
+#It runs test_env()
 if __name__ == '__main__':
     #play()
     test_env()
