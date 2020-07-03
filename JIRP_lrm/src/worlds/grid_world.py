@@ -171,43 +171,45 @@ class GridWorld:
         return np.concatenate((map_features,event_features), axis=None)
 
     def _load_map(self, file_map):
+        if(file_map is None):
+            print("This environment doesn't use a file to define its map")
+        else:
+            # contains all the actions that the agent can perform
+            actions = [Actions.up.value, Actions.right.value, Actions.down.value, Actions.left.value]
+            # loading the map
+            self.max_i = 0
+            self.max_j = 0
+            self.map = []
+            f = open(file_map)
+            for l in f:
+                # I don't consider empty lines!
+                if len(l.rstrip()) == 0:
+                    continue
 
-        # contains all the actions that the agent can perform
-        actions = [Actions.up.value, Actions.right.value, Actions.down.value, Actions.left.value]
-        # loading the map
-        self.max_i = 0
-        self.max_j = 0
-        self.map = []
-        f = open(file_map)
-        for l in f:
-            # I don't consider empty lines!
-            if len(l.rstrip()) == 0:
-                continue
+                # adding list of rooms
+                if "Rooms:" in l:
+                    self.rooms = eval(l.rstrip().replace("Rooms: ",""))
+                    continue
 
-            # adding list of rooms
-            if "Rooms:" in l:
-                self.rooms = eval(l.rstrip().replace("Rooms: ",""))
-                continue
-
-            # this line is part of a room!
-            row = []
-            for e in l.replace("\n",""):
-                i,j = len(self.map), len(row)
-                if e in " A": entity = Empty(i,j)
-                if e in "X?.": entity = Obstacle(i,j,label=e)
-                if e in "abcdefghij": # klmnopqrstuvwxyz are used for the other objects
-                    entity = Empty(i,j,label=e)
-                if e == "K": entity = Key(i,j)
-                if e == "D": entity = Door(i,j)
-                if e == "B": entity = Buttom(i,j)
-                if e == "T": entity = CookieButtom(i,j)
-                if e == "C": entity = Cookie(i,j)
-                if e == "A": self.agent = Agent(actions,i,j)
-                row.append(entity)
-                self.max_i = max([self.max_i, i])
-                self.max_j = max([self.max_j, j])
-            self.map.append(row)
-        f.close()
+                # this line is part of a room!
+                row = []
+                for e in l.replace("\n",""):
+                    i,j = len(self.map), len(row)
+                    if e in " A": entity = Empty(i,j)
+                    if e in "X?.": entity = Obstacle(i,j,label=e)
+                    if e in "abcdefghij": # klmnopqrstuvwxyz are used for the other objects
+                        entity = Empty(i,j,label=e)
+                    if e == "K": entity = Key(i,j)
+                    if e == "D": entity = Door(i,j)
+                    if e == "B": entity = Buttom(i,j)
+                    if e == "T": entity = CookieButtom(i,j)
+                    if e == "C": entity = Cookie(i,j)
+                    if e == "A": self.agent = Agent(actions,i,j)
+                    row.append(entity)
+                    self.max_i = max([self.max_i, i])
+                    self.max_j = max([self.max_j, j])
+                self.map.append(row)
+            f.close()
 
         # information for the feature representation of the maps
         self.map_locations = [] # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations

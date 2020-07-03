@@ -4,6 +4,10 @@ if __name__ == '__main__':
     sys.path.insert(0, '../')
 
 from worlds.game_objects import Actions
+from worlds.game_objects import *
+from worlds.grid_world import GridWorldParams, GridWorld, run_human_agent
+import random, math, os
+import numpy as np
 import random, math, os
 import numpy as np
 from reward_machines.env_reward_machine import EnvRewardMachine
@@ -11,13 +15,14 @@ from reward_machines.env_reward_machine import EnvRewardMachine
 """
 Auxiliary class with the configuration parameters that the Game class needs
 """
-class OfficeWorldParams:
+class OfficeWorldParams(GridWorldParams):
     def __init__(self):
-        pass
+        super.__init__(game_type = "office", file_map = None, movement_noise = 0.05)
 
-class OfficeWorld:
+class OfficeWorld(GridWorld):
 
     def __init__(self, params):
+        super().__init__(params)
         self._load_map()
         self.env_game_over = False
         self.rm_file = "../../experiments/office/reward_machines/t1.txt"
