@@ -6,8 +6,8 @@ class GameParams:
     """
     Auxiliary class with the configuration parameters that the Game class needs
     """
-    def __init__(self, game_type, game_params):
-        self.game_type   = game_type
+    def __init__(self, game_params):
+        self.game_type   = game_params.game_type
         self.game_params = game_params
         if self.game_type not in ["craftworld", "trafficworld", "officeworld"]:
             print(self.game_type, "is not currently supported")
