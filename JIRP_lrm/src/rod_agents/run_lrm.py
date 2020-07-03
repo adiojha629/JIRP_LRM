@@ -69,7 +69,7 @@ def run_lrm(env_params, lp, rl):
 
     # Start learning a policy for the current rm
     finish_learning = False
-    while step < lp.train_steps and not finish_learning:
+    while step < lp.train_steps and not finish_learning: #####
         env.restart()        
         o1_events   = env.get_events()
         o1_features = env.get_features()
@@ -77,7 +77,7 @@ def run_lrm(env_params, lp, rl):
         trace = [(o1_events, 0.0)]
         add_trace = False
         
-        for _ in range(lp.episode_horizon):
+        for _ in range(lp.episode_horizon):#####
 
             # reinitializing the policy if the rm changed
             if policy is None:

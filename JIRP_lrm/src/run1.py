@@ -194,6 +194,7 @@ def get_params_office_world(experiment):
 
 
 def run_experiment(world, alg_name, experiment_known, experiment_learned, num_times, show_print, show_plots, is_SAT):
+    '''
     if world == 'officeworld':
         testing_params_k, learning_params_k, tester, curriculum_k = get_params_office_world(experiment_known)
         testing_params, learning_params, tester_l, curriculum = get_params_office_world(experiment_learned)
@@ -228,6 +229,7 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
 
     if alg_name == "qlearning":
         run_qlearning_experiments(alg_name, tester, tester_l, curriculum, num_times, show_print, show_plots)
+    '''
     if alg_name == "lrm-qrm":
         rl = 'lrm-qrm'
         env = "office_world"
@@ -250,7 +252,7 @@ def run_lrm_agent(rl, env, n_seed, n_workers):
     lp.set_rm_learning(rm_init_steps=200e3, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
     lp.set_rl_parameters(gamma=0.9, train_steps=int(2e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(2e6))
-    lp.set_test_parameters(test_freq = int(1e4))
+    lp.set_test_parameters(test_freq = int(1e4))#how often we print results to the screen
     lp.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,
                     buffer_size = 100000, batch_size = 32, use_double_dqn = True, num_hidden_layers = 5, num_neurons = 64)
 
@@ -276,7 +278,7 @@ if __name__ == "__main__":
     # EXAMPLE: python3 run.py --algorithm="jirp" --world="craft" --map=0 --num_times=1 --show_plots=1 --is_SAT=1
 
     # Getting params
-    algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm']
+    algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
     worlds     = ["office", "craft", "traffic"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
