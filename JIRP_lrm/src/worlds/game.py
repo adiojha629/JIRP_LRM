@@ -17,12 +17,7 @@ class Game:
 
     def __init__(self, params):
         self.params = params
-        if params.game_type == "craftworld":
-            self.game = CraftWorld(params.game_params)
-        if params.game_type == "trafficworld":
-            self.game = TrafficWorld(params.game_params)
-        if params.game_type == "officeworld":
-            self.game = OfficeWorld(params.game_params)
+        self.restart()
 
     def restart(self):
         if self.params.game_type == "craftworld":

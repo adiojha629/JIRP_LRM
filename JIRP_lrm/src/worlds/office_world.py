@@ -15,14 +15,14 @@ from reward_machines.env_reward_machine import EnvRewardMachine
 """
 Auxiliary class with the configuration parameters that the Game class needs
 """
-class OfficeWorldParams(GridWorldParams):
+class OfficeWorldParams():
     def __init__(self):
-        super.__init__(game_type = "office", file_map = None, movement_noise = 0.05)
+        self.grid_world_params = GridWorldParams(self,game_type = "officeworld", file_map = None, movement_noise = 0.05)
 
 class OfficeWorld(GridWorld):
 
     def __init__(self, params):
-        super().__init__(params)
+        super().__init__(GridWorldParams(self,game_type = "office", file_map = None, movement_noise = 0.05))
         self._load_map()
         self.env_game_over = False
         self.rm_file = "../../experiments/office/reward_machines/t1.txt"
