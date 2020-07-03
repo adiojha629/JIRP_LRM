@@ -77,7 +77,7 @@ def run_lrm(env_params, lp, rl):
         trace = [(o1_events, 0.0)]
         add_trace = False
         
-        for _ in range(lp.episode_horizon):#####
+        for _ in range(lp.episode_horizon):##### 5000
 
             # reinitializing the policy if the rm changed
             if policy is None:

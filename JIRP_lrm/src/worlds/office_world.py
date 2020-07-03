@@ -20,7 +20,7 @@ class OfficeWorld:
     def __init__(self, params):
         self._load_map()
         self.env_game_over = False
-        self.rm_file = "../experiments/office/reward_machines/t1.txt"
+        self.rm_file = "../../experiments/office/reward_machines/t1.txt"
         self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()#get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
@@ -308,8 +308,8 @@ def test_env():
     total_reward = game.env_rm.get_reward(game.u1,game.u1)
     print("The total reward given is " + str(total_reward))
 
-    print(game.get_reward_list())
-
+    #print(game.get_reward_list())
+    print(game.get_features())
     #dictionary to parse input
     act_to_num = {"w":0,"d":1,"s":2,"a":3}
 
