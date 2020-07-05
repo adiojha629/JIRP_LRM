@@ -214,6 +214,10 @@ class OfficeWorld(GridWorld):
         self.map[4][4] = Empty(4, 4, label="g")
         # Adding walls
         self.forbidden_transitions = set()
+
+        #set up self.map_classes
+        self.map_classes = self.get_map_classes()
+
         # general grid
         for x in range(12):
             for y in [0, 3, 6]:
@@ -263,8 +267,14 @@ class OfficeWorld(GridWorld):
                     room_id = self._get_room(i, j)
                     self.map_locations.append((room_id, i, j))
 
+    def get_map_classes(self):
+        # Returns the string with all the classes of objects that are part of this domain
+        # why abcefg, look at _load_map and see what labels I'm giving to the Empty-class objects
+        return "abcefg"
 
-# play is an old function used for debugging office world; use test_env() instead
+    # play is an old function used for debugging office world; use test_env() instead
+
+
 def play():
     from reward_machines.reward_machine import RewardMachine
 
