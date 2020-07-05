@@ -346,7 +346,7 @@ def play():
 def test_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
     game = OfficeWorld(params)
-    game._get_map_features()
+    print(game._get_map_features())
     # Print out the map so we can see where the agent is
     game.show()
     # Show the state of the reward machine
