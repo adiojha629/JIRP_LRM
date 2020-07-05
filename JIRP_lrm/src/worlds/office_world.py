@@ -50,9 +50,11 @@ class OfficeWorld(GridWorld):
         We execute 'action' in the game
         return reward and done
         """
-        x, y = self.agent
+        x = self.agent.i
+        y = self.agent.j
         # executing action
-        self.agent = self.xy_MDP_slip(a, 0.9)  # progresses in x-y system
+        (x,y) = self.xy_MDP_slip(a, 0.9)  # progresses in x-y system
+        self.agent = Agent(x,y,Actions)
         u1 = self.u1
         s1 = self.get_state()
         events = self.get_events()  # get conditions of the game
@@ -66,7 +68,8 @@ class OfficeWorld(GridWorld):
         return reward, done
 
     def xy_MDP_slip(self, a, p):
-        x, y = self.agent
+        x = self.agent.i
+        y = self.agent.j
         slip_p = [p, (1 - p) / 2, (1 - p) / 2]
         check = random.random()
 
@@ -134,7 +137,7 @@ class OfficeWorld(GridWorld):
         return ret
 
     def get_state(self):
-        return self.agent[0] * 9 + self.agent[1] + 1  # the plus one eliminates the 0 tile. states go from 1 to 108
+        return self.agent.i * 9 + self.agent.j + 1  # the plus one eliminates the 0 tile. states go from 1 to 108
 
     # The following methods return different feature representations of the map ------------
     def get_features(self):
@@ -240,6 +243,7 @@ class OfficeWorld(GridWorld):
             self.forbidden_transitions.remove((x, 3, Actions.down))
         # Adding the agent
         self.agent = (2, 1)
+        self.agent = Agent(2,1,Actions)
 
         # create self.rooms for gridworld dependency
         """Description of self.rooms
