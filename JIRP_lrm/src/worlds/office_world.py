@@ -11,7 +11,6 @@ import numpy as np
 import random, math, os
 import numpy as np
 from reward_machines.env_reward_machine import EnvRewardMachine
-
 """
 Auxiliary class with the configuration parameters that the Game class needs
 """
@@ -23,7 +22,7 @@ class OfficeWorld(GridWorld):
 
     def __init__(self, params):
         super().__init__(params)
-        self._load_map()
+        self.file_map = params.file_map #this variable is not used. it is here so that the code corresponds with Rodrigo's code
         self.env_game_over = False
         self.rm_file = "../../experiments/office/reward_machines/t1.txt"
         self.env_rm = EnvRewardMachine(self.rm_file)
@@ -183,7 +182,7 @@ class OfficeWorld(GridWorld):
                 print()                
 
     # The following methods create the map ----------------------------------------------
-    def _load_map(self):
+    def _load_map(self,file_map):
         # Creating the map
         self.objects = {}
         #env.agent = tuple([2, 2])
@@ -301,8 +300,9 @@ def play():
 
 #this method is for debugging. If you create a new method and want to see what it returns, add code here, then click run
 def test_env():
-    params = GridWorldParams(game_type = "officeworld", file_map = 0, movement_noise = 0.05)
+    params = GridWorldParams(game_type="officeworld",file_map=None,movement_noise=0.05)
     game = OfficeWorld(params)
+
     #Print out the map so we can see where the agent is
     game.show()
     #Show the state of the reward machine
