@@ -213,7 +213,7 @@ class GridWorld:
                 self.map.append(row)
             f.close()
 
-        # information for the feature representation of the maps
+        # information for the feature representation of the mapsw
         self.map_locations = [] # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations
         self.map_classes = self.get_map_classes()
         for i in range(len(self.map)):

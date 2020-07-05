@@ -22,7 +22,6 @@ class OfficeWorld(GridWorld):
 
     def __init__(self, params):
         super().__init__(params)
-        self.file_map = params.file_map #this variable is not used. it is here so that the code corresponds with Rodrigo's code
         self.env_game_over = False
         self.rm_file = "../../experiments/office/reward_machines/t1.txt"
         self.env_rm = EnvRewardMachine(self.rm_file)
@@ -183,6 +182,7 @@ class OfficeWorld(GridWorld):
 
     # The following methods create the map ----------------------------------------------
     def _load_map(self,file_map):
+        #NOTE: file_map is not used. it is here so that the office world can be a subclass of Grid World
         # Creating the map
         self.objects = {}
         #env.agent = tuple([2, 2])
@@ -202,16 +202,6 @@ class OfficeWorld(GridWorld):
 
         # Adding walls
         self.forbidden_transitions = set()
-        # for x in range(12):
-        #     for y in [0]:
-        #         self.forbidden_transitions.add((x,y,Actions.down))
-        #     for y in [8]:
-        #         self.forbidden_transitions.add((x,y,Actions.up))
-        # for y in range(9):
-        #     for x in [0]:
-        #         self.forbidden_transitions.add((x,y,Actions.left))
-        #     for x in [11]:
-        #         self.forbidden_transitions.add((x,y,Actions.right))
         # general grid
         for x in range(12):
             for y in [0,3,6]:
@@ -234,6 +224,28 @@ class OfficeWorld(GridWorld):
             self.forbidden_transitions.remove((x,3,Actions.down))
         # Adding the agent
         self.agent = (2,1)
+
+        #create self.rooms for gridworld dependency
+        """Description of self.rooms
+        self.rooms = [ [ ] ....]
+        a list of lists. each inner list has two tuples.
+        The first tuple corresponds to the bottom left coordinate of a room
+        The second tuple corresponds to the top right coordinate of a room
+        ie self.rooms = [ [ (0,0), (2,2) ], [(0,3), (2,5)] ] means that there are two rooms; one covers the area 0,0 to 2,2 etc.
+        since our world is a 9x12 grid with 12 rooms of equal size (each room is a 3 space by 3 space)
+        A formula is used to create self.rooms for office world.
+        """
+        self.rooms = [] #initialize rooms to be empty; the for loop fills it up
+        for x1 in [0,3,6]:
+            x2 = x1 + 2#x2 will be 2 when x1 = 0, etc
+            for y1 in [0,3,6,9]:
+                y2 = y1 + 2
+                tuple_1 = (x1,y1)
+                tuple_2 = (x2,y2)
+                list_1 = [tuple_1,tuple_2]
+                self.rooms.append(list_1)
+
+
 
 #play is an old function used for debugging office world; use test_env() instead
 def play():
@@ -302,7 +314,7 @@ def play():
 def test_env():
     params = GridWorldParams(game_type="officeworld",file_map=None,movement_noise=0.05)
     game = OfficeWorld(params)
-
+    #game._get_map_features()
     #Print out the map so we can see where the agent is
     game.show()
     #Show the state of the reward machine
@@ -316,8 +328,8 @@ def test_env():
     print("The total reward given is " + str(total_reward))
 
     #print(game.get_reward_list())
-    print("Game.getfeaures() returns")
-    print(game.get_features())
+    #print("Game.getfeaures() returns")
+    #print(game.get_features())
     #dictionary to parse input
     act_to_num = {"w":0,"d":1,"s":2,"a":3}
     done = False #since the game has started we know that the game is not done
@@ -343,8 +355,8 @@ def test_env():
       print("Reward at THIS STATE is " + str(reward))
       total_reward = total_reward + reward
       print("The total reward given is " + str(total_reward))
-      print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
-      print(game.get_features())
+      #print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+      #print(game.get_features())
 # This code allow to play a game (for debugging purposes)
 #It runs test_env()
 if __name__ == '__main__':
