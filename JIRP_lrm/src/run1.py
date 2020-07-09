@@ -12,7 +12,7 @@ from common.curriculum import CurriculumLearner
 from rod_agents.learning_parameters import LearningParameters
 from run_lrm import run_lrm_experiments
 from worlds.game import GameParams
-
+from worlds.grid_world import GridWorldParams
 def get_params_craft_world(experiment):
     step_unit = 400
 
@@ -270,7 +270,7 @@ def run_lrm_agent(rl, env, n_seed, n_workers):
 def set_environment(env,lp):
     if env == "office_world" or env == "officeworld":
         game_type = "officeworld"
-    return GameParams(game_type,game_params = '')
+    return GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
 
 
 if __name__ == "__main__":

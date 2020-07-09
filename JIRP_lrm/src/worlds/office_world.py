@@ -28,7 +28,7 @@ class OfficeWorld(GridWorld):
     def __init__(self, params):
         super().__init__(params)
         self.env_game_over = False
-        self.rm_file = "../../experiments/office/reward_machines/t1.txt"
+        self.rm_file = "../experiments/office/reward_machines/t1.txt"
         self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
@@ -140,12 +140,15 @@ class OfficeWorld(GridWorld):
         return self.agent.i * 9 + self.agent.j + 1  # the plus one eliminates the 0 tile. states go from 1 to 108
 
     # The following methods return different feature representations of the map ------------
-    def get_features(self):
+    #NOTE only left for the time being (july 8 2020)
+    #this method is defined in superclass grid_world.py
+    """def get_features(self):
         x, y = self.agent.i,self.agent.j
         N, M = 12, 9
         ret = np.zeros((N, M), dtype=np.float64)
         ret[x, y] = 1
         return ret.ravel()  # from 2D to 1D (use a.flatten() is you want to copy the array)
+        """
 
     def show(self):
         for y in range(8, -1, -1):
@@ -346,9 +349,9 @@ def play():
 def test_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
     game = OfficeWorld(params)
-    x = game._get_event_features()
-    print(x)
-    print("Length of get features is " + str(len(x)))
+    #x = game.get_features()
+    #print(x)
+    #print("Length of get features is " + str(len(x)))
     # Print out the map so we can see where the agent is
     game.show()
     # Show the state of the reward machine

@@ -36,8 +36,11 @@ def run_tabu_search(traces, U_max, tabu_list_max, n_workers, lr_steps, current_r
     steps = 0
 
     # 1. Precomputing auxiliary variables for learning the reward machine
-    initial_obs = set([trace[0][0] for trace in traces])
-    observations = list(set([o for trace in traces for o,_ in trace])) # the order is important for the tabu list
+    initial_obs = set([trace[0][0] for trace in traces]) #gets all the inital observations from all the traces
+    #july8 2020: bottom line gets all the observations from all the trace vars in traces
+    #trace = list of tuples (obs,reward)
+    #traces = list of trace variables
+    observations = list(set([o for trace in traces for o,_ in trace])) # the order is important for the tabu list.
     N = dict([(o,set()) for o in observations])
     for trace in traces:
         for t in range(1,len(trace)):

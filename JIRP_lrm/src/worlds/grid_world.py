@@ -14,7 +14,7 @@ class GridWorldParams:
 class GridWorld:
 
     def __init__(self, params):
-        print(params.file_map)
+        #print(params.file_map)
         self.file_map = params.file_map
         self._load_map(params.file_map)
         self.movement_noise = params.movement_noise
@@ -153,7 +153,7 @@ class GridWorld:
                     map_features[i,self.map_classes.index(obj_type)+2] = 1.0
         return map_features
 
-    def _get_event_features(self):
+    def _get_event_features(self): #returns a list of length of all the possible events (a,b,c etc). If that event is happening (ie agent is on tile with a) that index will be 1
         all_events = self.get_all_events()
         n_events = len(all_events)
         event_features = np.zeros(n_events, dtype=np.float64)

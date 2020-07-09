@@ -25,7 +25,7 @@ class Game:
         if self.params.game_type == "trafficworld":
             self.game = TrafficWorld(self.params.game_params)
         if self.params.game_type == "officeworld":
-            self.game = OfficeWorld(self.params.game_params)
+            self.game = OfficeWorld(self.params)
 
     def is_env_game_over(self):
         return self.game.env_game_over
