@@ -165,7 +165,7 @@ class OfficeWorld(GridWorld):
                     print("|", end="")
                 elif x % 3 == 0:
                     print(" ", end="")
-                if (x, y) == self.agent:
+                if (x, y) == (self.agent.i,self.agent.j):
                     print("A", end="")
                 elif (x, y) in self.objects:
                     print(self.objects[(x, y)], end="")
@@ -242,7 +242,7 @@ class OfficeWorld(GridWorld):
             self.forbidden_transitions.remove((x, 2, Actions.up))
             self.forbidden_transitions.remove((x, 3, Actions.down))
         # Adding the agent
-        self.agent = (2, 1)
+        #self.agent = (2, 1)
         self.agent = Agent(2,1,Actions)
 
         # create self.rooms for gridworld dependency
@@ -256,10 +256,10 @@ class OfficeWorld(GridWorld):
         A formula is used to create self.rooms for office world.
         """
         self.rooms = []  # initialize rooms to be empty; the for loop fills it up
-        for x1 in [0, 3, 6]:
-            x2 = x1 + 2  # x2 will be 2 when x1 = 0, etc
-            for y1 in [0, 3, 6, 9]:
-                y2 = y1 + 2
+        for y1 in [0, 3, 6]:
+            y2 = y1 + 2  # x2 will be 2 when x1 = 0, etc
+            for x1 in [0, 3, 6, 9]:
+                x2 = x1 + 2
                 tuple_1 = (x1, y1)
                 tuple_2 = (x2, y2)
                 list_1 = [tuple_1, tuple_2]
@@ -346,7 +346,9 @@ def play():
 def test_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
     game = OfficeWorld(params)
-    print(game._get_map_features())
+    #x = game._get_map_features()
+    #print(x)
+    print("Length of get features is " + str(len(x)))
     # Print out the map so we can see where the agent is
     game.show()
     # Show the state of the reward machine
@@ -396,3 +398,9 @@ def test_env():
 if __name__ == '__main__':
     # play()
     test_env()
+    """
+    params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
+    game = OfficeWorld(params)
+    game.show()
+    print(game._get_map_features())
+    """
