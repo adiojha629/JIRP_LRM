@@ -132,8 +132,8 @@ class OfficeWorld(GridWorld):
         Returns the string with the propositions that are True in this state
         """
         ret = ""
-        if self.agent in self.objects:
-            ret += self.objects[self.agent]
+        if (self.agent.i,self.agent.j) in self.objects:
+            ret += self.objects[(self.agent.i,self.agent.j)]
         return ret
 
     def get_state(self):
@@ -141,7 +141,7 @@ class OfficeWorld(GridWorld):
 
     # The following methods return different feature representations of the map ------------
     def get_features(self):
-        x, y = self.agent
+        x, y = self.agent.i,self.agent.j
         N, M = 12, 9
         ret = np.zeros((N, M), dtype=np.float64)
         ret[x, y] = 1
@@ -242,7 +242,6 @@ class OfficeWorld(GridWorld):
             self.forbidden_transitions.remove((x, 2, Actions.up))
             self.forbidden_transitions.remove((x, 3, Actions.down))
         # Adding the agent
-        #self.agent = (2, 1)
         self.agent = Agent(2,1,Actions)
 
         # create self.rooms for gridworld dependency
@@ -277,7 +276,8 @@ class OfficeWorld(GridWorld):
         return "abcefg"
 
     # play is an old function used for debugging office world; use test_env() instead
-
+    def get_all_events(self):
+        return "abcefg"
 
 def play():
     from reward_machines.reward_machine import RewardMachine
@@ -346,8 +346,8 @@ def play():
 def test_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
     game = OfficeWorld(params)
-    #x = game._get_map_features()
-    #print(x)
+    x = game._get_event_features()
+    print(x)
     print("Length of get features is " + str(len(x)))
     # Print out the map so we can see where the agent is
     game.show()
@@ -389,6 +389,8 @@ def test_env():
         print("Reward at THIS STATE is " + str(reward))
         total_reward = total_reward + reward
         print("The total reward given is " + str(total_reward))
+        x = game._get_event_features()
+        print(x)
         # print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
         # print(game.get_features())
 
