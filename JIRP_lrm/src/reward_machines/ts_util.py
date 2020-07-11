@@ -43,25 +43,25 @@ def evaluate_rm(delta, local_change, tabu_set, U_max, observations, N, traces):
             assert False, "You shouldn't be here..."
 
     # Defining the prediction variables
-    predictions = {}
-    for o in observations:
-        for i in range(U_max):
+    predictions = {} #empty dict
+    for o in observations: #will loop through '', 'a' etc.
+        for i in range(U_max): #i will loop from 0 to 9 in the case of having a max # of states (U_max) of 10
             if len(N[o]) < 2:
                 # In this case the prediction is trivial
                 continue
             
             # Creating the prediction variables
-            predictions[(i,o)] = set()
+            predictions[(i,o)] = set() #creates a key that is a tuple of i and observation
 
     # Simulating a trace
     to_pay = []
-    to_remove = set([(i,o) for i,o in delta])
+    to_remove = set([(i,o) for i,o in delta]) #all the state #(i) and observations in the current rm
     for trace_id in range(len(traces)):
         i = 0
-        trace = traces[trace_id]
+        trace = traces[trace_id]#get a trace
         for t in range(1, len(trace)):
-            o1,_ = trace[t-1]
-            o2,_ = trace[t]
+            o1,_ = trace[t-1] #get observation
+            o2,_ = trace[t] #and next observation
 
             # adding the prediction
             if len(N[o1]) > 1:

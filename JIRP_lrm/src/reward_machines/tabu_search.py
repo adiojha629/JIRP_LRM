@@ -37,15 +37,25 @@ def run_tabu_search(traces, U_max, tabu_list_max, n_workers, lr_steps, current_r
 
     # 1. Precomputing auxiliary variables for learning the reward machine
     initial_obs = set([trace[0][0] for trace in traces]) #gets all the inital observations from all the traces
-    #july8 2020: bottom line gets all the observations from all the trace vars in traces
+
+    #july8 2020: bottom line gets all the observations that the agent experienced in the trace
     #trace = list of tuples (obs,reward)
     #traces = list of trace variables
-    observations = list(set([o for trace in traces for o,_ in trace])) # the order is important for the tabu list.
+
+    observations = list(set([o for trace in traces for o,_ in trace])) # the order is important for the tabu list.==> why? 7-10-20
+
+
+    print("This is observations\n"+str(observations))
     N = dict([(o,set()) for o in observations])
+
     for trace in traces:
         for t in range(1,len(trace)):
-            N[trace[t-1][0]].add(trace[t][0])
-
+            N[trace[t-1][0]].add(trace[t][0]) #for each key, append the next observation seen to its value
+    print("\nThis is N\n"+str(N))
+    """
+    Variable 'N' is a dictionary where the keys are different observations seen by the agent, and the values are a list of all observations
+    the agent saw next after it saw the obersvation referenced by the key.
+    """
     # NOTE: Evaluating the current RM (we change the RM only if we find a better RM)
     current_rm_cost = float('inf')
     if current_rm is not None:

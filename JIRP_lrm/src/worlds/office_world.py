@@ -394,8 +394,9 @@ def test_env():
         print("The total reward given is " + str(total_reward))
         x = game._get_event_features()
         print(x)
-        # print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
-        # print(game.get_features())
+        print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+        print(game._get_map_features())
+        print(game._get_event_features())
 
 
 # This code allow to play a game (for debugging purposes)

@@ -1,6 +1,6 @@
 import random, time, os
 
-def save_results(rewards, scores, rm_info, game_type, alg, rl, seed):
+def save_results(rewards, scores, rm_info, game_type, alg, rl, seed,reward_list):
     folder = '../results/%s'%game_type
     if not os.path.exists(folder): os.makedirs(folder)
     root_file = '%s/%s-%s-%d'%(folder,alg,rl,seed)
@@ -30,4 +30,12 @@ def save_results(rewards, scores, rm_info, game_type, alg, rl, seed):
         for line in rm_info:
             # Training step \t reward
             f.write(line + "\n")
+        f.close()
+    if reward_list is not None:
+        # saving the training rewards
+        path_file = root_file + "_rewards_over_time.txt"
+        f = open(path_file, 'w')
+        for step in range(len(reward_list)):
+            # Training step \t reward
+            f.write("%d\t%d\n"%(step,reward_list[step]))
         f.close()
