@@ -265,7 +265,7 @@ def run_lrm_agent(rl, env, n_seed, n_workers):
     print("----------------------\n")
 
     # Running the experiment
-    run_lrm_experiments(env_params, lp, rl, n_seed, save)
+    run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=2)
 
 def set_environment(env,lp):
     if env == "office_world" or env == "officeworld":

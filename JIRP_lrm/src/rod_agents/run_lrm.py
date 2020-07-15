@@ -49,7 +49,7 @@ def run_lrm(env_params, lp, rl):
             reward, done = env.execute_action(a)
             o2_events = env.get_events()
             reward_total += reward
-            reward_list.append(reward_total)
+            reward_list.append(reward)
             trace.append((o2_events,reward))
             step += 1
             # Testing
@@ -103,7 +103,7 @@ def run_lrm(env_params, lp, rl):
             # updating the number of steps and total reward
             trace.append((o2_events,reward))
             reward_total += reward
-            reward_list.append(reward_total)
+            reward_list.append(reward)
             step += 1
 
             # updating the current RM if needed
@@ -158,15 +158,17 @@ def run_lrm(env_params, lp, rl):
     # return the trainig rewards
     return train_rewards, rm_scores, rm.get_info(),reward_list
 
-def run_lrm_experiments(env_params, lp, rl, n_seed, save):
+def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
     
     time_init = time.time()
     random.seed(n_seed)
-    rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
-    if save:
-        # Saving the results
-        out_folder = "LRM/" + rl + "/" + env_params.game_type
-        save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
+    for trail in [4,5]:
+        print("Trail: " + str(trail))
+        rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
+        if save:
+            # Saving the results
+            out_folder = "LRM/" + rl + "/trail_"+str(trail) + "/" + env_params.game_type
+            save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
 
     # Showing results
     print("Time:", "%0.2f"%((time.time() - time_init)/60), "mins\n")
