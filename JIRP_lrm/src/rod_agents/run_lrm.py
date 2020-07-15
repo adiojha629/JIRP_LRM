@@ -162,7 +162,7 @@ def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
     
     time_init = time.time()
     random.seed(n_seed)
-    for trail in [4,5]:
+    for trail in [6,7]:
         print("Trail: " + str(trail))
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
