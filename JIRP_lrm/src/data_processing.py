@@ -1,6 +1,7 @@
 import os
 import pickle
 import numpy as np
+'''
 plot_dict ={}
 #for loop here
 for trial in range(10):
@@ -32,6 +33,7 @@ for trial in range(10):
     #now plot_dict is updated
     print("plot_dict updated for trail #" + str(trial))
 print(plot_dict[1234])
+'''
 #save plot_dict
 '''
 folder = '../results/jul_16_LRM_Officeworld_10_trails'
@@ -44,7 +46,12 @@ if not os.path.exists(path_file):
     print("\nPlot_dict uploaded")
 #plot_dict = pickle.load(path_file)
 '''
+print("Loading plot_dict from file")
+f = open('../results/jul_16_LRM_Officeworld_10_trails/plot_dict.txt','rb')
+plot_dict = pickle.load(f)
+f.close()
 #code to plot data
+print("calculating percentiles")
 prc_25 = list()
 prc_50 = list()
 prc_75 = list()
@@ -88,31 +95,33 @@ font = {'family' : 'normal',
 matplotlib.rc('font', **font)
 axis_font_size = 20
 
-def plot_performance(steps,p25,p50,p75): #this is the function I need to replicate
+def plot_performance(steps,p25,p50,p75,title,algo): #this is the function I need to replicate
     fig, ax = plt.subplots() #Next three lines set the height and width of figure
     fig.set_figheight(6)
     fig.set_figwidth(8)
     ax.plot(steps, p25, alpha=0) #make 25 percentile transparent
-    ax.plot(steps, p50, color='black',label = 'PPO2') #put the 50th percentile in black
+    ax.plot(steps, p50, color='black',label = algo) #put the 50th percentile in black
     ax.plot(steps, p75, alpha=0)
     ax.grid()
     ax.legend()
     plt.fill_between(steps, p50, p25, color='grey', alpha=0.25)#fill in area between p50 and p25
     plt.fill_between(steps, p50, p75, color='grey', alpha=0.25)#fill in area between p50 p75
+    plt.title(title)
     plt.xlabel("time step",fontsize = axis_font_size)
     plt.ylabel("reward",fontsize = axis_font_size)
     plt.show()
 
-def plot_this(a1,a2):
+def plot_this(a1,a2,title,algo):
     fig, ax = plt.subplots()
     fig.set_figheight(6)
     fig.set_figwidth(8)
-    ax.plot(a1,a2, color='blue',label = 'PPO2')
+    ax.plot(a1,a2, color='blue',label = algo)
     ax.grid()
     ax.legend()
+    plt.title(title)
     plt.xlabel("time step",fontsize = axis_font_size)
     plt.ylabel("reward",fontsize = axis_font_size)
     plt.show()
-plot_performance(steps_plot,prc_25,prc_50,prc_75)
-plot_this(steps_plot,rewards_plot)
+plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm')
+plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm')
 

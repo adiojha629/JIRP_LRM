@@ -193,7 +193,8 @@ def get_params_office_world(experiment):
     return testing_params, learning_params, tester, curriculum
 
 
-def run_experiment(world, alg_name, experiment_known, experiment_learned, num_times, show_print, show_plots, is_SAT):
+def run_experiment(world, alg_name, experiment_known, experiment_learned, num_times, show_print, show_plots, is_SAT,num_trials):
+    """The Below code was commented out, as it is a left over from JIRP. Only code that runs LRM is uncommented"""
     '''
     if world == 'officeworld':
         testing_params_k, learning_params_k, tester, curriculum_k = get_params_office_world(experiment_known)
@@ -230,29 +231,35 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
     if alg_name == "qlearning":
         run_qlearning_experiments(alg_name, tester, tester_l, curriculum, num_times, show_print, show_plots)
     '''
+
     if alg_name == "lrm-qrm":
         rl = 'lrm-qrm'
         env = "office_world"
         n_seed = 0
         n_workers = 16
-        run_lrm_agent(rl,env,n_seed,n_workers)
+        run_lrm_agent(rl,env,n_seed,n_workers,num_trials)
 
 
 #lp and learning parameters variables point to the same Learning Parameters class
-def run_lrm_agent(rl, env, n_seed, n_workers):
+def run_lrm_agent(rl, env, n_seed, n_workers,num_trails):
 
-    save = True
+    save = True #indicates that we are saving data
     print("Running", rl, "in", env, "using seed", n_seed)
     if save: print("SAVING RESULTS!")
     else:    print("*NOT* SAVING RESULTS!")
 
     # Setting the learning parameters
     lp = LearningParameters()
-
+    #below we allow the agent to explore the environment for 2e5 steps before we start training
     lp.set_rm_learning(rm_init_steps=200e3, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
+    #below we set the train_steps to 2e6
     lp.set_rl_parameters(gamma=0.9, train_steps=int(2e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(2e6))
-    lp.set_test_parameters(test_freq = int(1e4))#how often we print results to the screen
+
+    #below we determine how often we print results. Right now we print results every 1e4 time steps
+    lp.set_test_parameters(test_freq = int(1e4))
+
+    #below we set learning rate, batch_size and other hyper parameters
     lp.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,
                     buffer_size = 100000, batch_size = 32, use_double_dqn = True, num_hidden_layers = 5, num_neurons = 64)
 
@@ -265,7 +272,7 @@ def run_lrm_agent(rl, env, n_seed, n_workers):
     print("----------------------\n")
 
     # Running the experiment
-    run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=2)
+    run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=num_trails) #to see specifics look at run_lrm.py
 
 def set_environment(env,lp):
     if env == "office_world" or env == "officeworld":
@@ -279,13 +286,21 @@ if __name__ == "__main__":
 
     # Getting params
     algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
+    #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
+
+    """For now only office world will work with LRM"""
     worlds     = ["office", "craft", "traffic"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
+
+    """Change the below line's default to change the type of algorithm"""
     parser.add_argument('--algorithm', default='lrm-qrm', type=str,
                         help='This parameter indicated which RL algorithm to use. The options are: ' + str(algorithms))
+    """Change the below line's default to change the world (only office world works with LRM at this time) """
     parser.add_argument('--world', default='office', type=str,
                         help='This parameter indicated which world to solve. The options are: ' + str(worlds))
+
+    """The below arguements are not uses in LRM"""
     parser.add_argument('--map', default=0, type=int, 
                         help='This parameter indicated which map to use. It must be a number between 0 and 10.')
     parser.add_argument('--num_times', default=10, type=int,
@@ -296,10 +311,12 @@ if __name__ == "__main__":
  
 
     args = parser.parse_args()
+    """The code below raises errors if an incorrect argument is given"""
     if args.algorithm not in algorithms: raise NotImplementedError("Algorithm " + str(args.algorithm) + " hasn't been implemented yet")
     if args.world not in worlds: raise NotImplementedError("World " + str(args.world) + " hasn't been defined yet")
     if not(0 <= args.map <= 10): raise NotImplementedError("The map must be a number between 0 and 10")
     if args.num_times < 1: raise NotImplementedError("num_times must be greater than 0")
+
 
     # Running the experiment
     alg_name   = args.algorithm
@@ -309,7 +326,7 @@ if __name__ == "__main__":
     show_print = args.verbosity is not None
     show_plots = (int(args.show_plots) == 1)
     is_SAT = (int(args.is_SAT) == 1)
-
+    """The following if statements set variables that do not matter for running LRM (these variables are not passed into the LRM algorithm)"""
     if world == "office":
         experiment_l = "../experiments/office/tests/hypothesis_machines.txt"
         experiment_t = "../experiments/office/tests/ground_truth.txt"
@@ -330,6 +347,6 @@ if __name__ == "__main__":
             experiment_t = "../experiments/traffic/tests/ground_truth.txt"
     world += "world"
 
-
+    num_trials = 2
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
-    run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT)
+    run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)
