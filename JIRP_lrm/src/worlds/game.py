@@ -1,6 +1,6 @@
 from worlds.traffic_world import TrafficWorldParams, TrafficWorld
 from worlds.craft_world import CraftWorldParams, CraftWorld
-from worlds.office_world import OfficeWorldParams, OfficeWorld
+from worlds.office_world import OfficeWorldParams, OfficeWorld,OfficeWorldActive
 
 class GameParams:
     """
@@ -26,6 +26,8 @@ class Game:
             self.game = TrafficWorld(self.params.game_params)
         if self.params.game_type == "officeworld":
             self.game = OfficeWorld(self.params)
+        if self.params.game_type == "officeworld_active":
+            self.game = OfficeWorldActive(self.params)
 
     def is_env_game_over(self):
         return self.game.env_game_over

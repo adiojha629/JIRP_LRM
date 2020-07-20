@@ -234,7 +234,7 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
 
     if alg_name == "lrm-qrm":
         rl = 'lrm-qrm'
-        env = "office_world"
+        env = "officeworld_active" if "active" in world else "office_world"
         n_seed = 0
         n_workers = 16
         run_lrm_agent(rl,env,n_seed,n_workers,num_trials)
@@ -277,7 +277,9 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails):
 def set_environment(env,lp):
     if env == "office_world" or env == "officeworld":
         game_type = "officeworld"
-    return GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
+    if "active" in env:
+        game_type = "officeworld_active"
+    return GridWorldParams(game_type=game_type, file_map=None, movement_noise=0.05)
 
 
 if __name__ == "__main__":
@@ -289,7 +291,7 @@ if __name__ == "__main__":
     #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
 
     """For now only office world/office world active will work with LRM"""
-    worlds     = ["office","office_active", "craft", "traffic"]
+    worlds = ["office","office_active", "craft", "traffic"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
@@ -297,7 +299,7 @@ if __name__ == "__main__":
     parser.add_argument('--algorithm', default='lrm-qrm', type=str,
                         help='This parameter indicated which RL algorithm to use. The options are: ' + str(algorithms))
     """Change the below line's default to change the world (only office world works with LRM at this time) """
-    parser.add_argument('--world', default='office', type=str,
+    parser.add_argument('--world', default='office_active', type=str,
                         help='This parameter indicated which world to solve. The options are: ' + str(worlds))
 
     """The below arguements are not uses in LRM"""
@@ -346,6 +348,7 @@ if __name__ == "__main__":
             experiment_l = "../experiments/traffic/tests/ground_truth.txt"
             experiment_t = "../experiments/traffic/tests/ground_truth.txt"
     world += "world"
+
 
     num_trials = 2
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)

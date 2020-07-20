@@ -46,54 +46,55 @@ if not os.path.exists(path_file):
     print("\nPlot_dict uploaded")
 #plot_dict = pickle.load(path_file)
 '''
-print("Loading plot_dict from file")
-f = open('../results/jul_16_LRM_Officeworld_10_trails/plot_dict.txt','rb')
-plot_dict = pickle.load(f)
-f.close()
-#code to plot data
-print("calculating percentiles")
-prc_25 = list()
-prc_50 = list()
-prc_75 = list()
-rewards_plot = list()
-steps_plot = list()
-current_step = list()
-current_25 = list()
-current_50 = list()
-current_75 = list()
-steps_plot = list()
-for step in plot_dict.keys():
-    if len(current_step) < 10: #if current step has less than 10 elements
-        current_25.append(np.percentile(np.array(plot_dict[step]),25))#get the precentiles of values for this step size
-        current_50.append(np.percentile(np.array(plot_dict[step]),50))
-        current_75.append(np.percentile(np.array(plot_dict[step]),75))
-        current_step.append(sum(plot_dict[step])/len(plot_dict[step]))#append the average value to current step
-        #I think that the dictionary holds the values from all 10 trials
-    else:#if current step has 10 or more entries, then you remove the last values
-        current_step.pop(0)
-        current_25.pop(0)
-        current_50.pop(0)
-        current_75.pop(0)
-        current_25.append(np.percentile(np.array(plot_dict[step]),25))
-        current_50.append(np.percentile(np.array(plot_dict[step]),50))
-        current_75.append(np.percentile(np.array(plot_dict[step]),75))
-        current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+if __name__ == "__main__":
+    print("Loading plot_dict from file")
+    f = open('../results/jul_16_LRM_Officeworld_10_trails/plot_dict.txt','rb')
+    plot_dict = pickle.load(f)
+    f.close()
+    #code to plot data
+    print("calculating percentiles")
+    prc_25 = list()
+    prc_50 = list()
+    prc_75 = list()
+    rewards_plot = list()
+    steps_plot = list()
+    current_step = list()
+    current_25 = list()
+    current_50 = list()
+    current_75 = list()
+    steps_plot = list()
+    for step in plot_dict.keys():
+        if len(current_step) < 10: #if current step has less than 10 elements
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))#get the precentiles of values for this step size
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))#append the average value to current step
+            #I think that the dictionary holds the values from all 10 trials
+        else:#if current step has 10 or more entries, then you remove the last values
+            current_step.pop(0)
+            current_25.pop(0)
+            current_50.pop(0)
+            current_75.pop(0)
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
 
-    rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
-    prc_25.append(sum(current_25)/len(current_25))
-    prc_50.append(sum(current_50)/len(current_50))
-    prc_75.append(sum(current_75)/len(current_75))
-    steps_plot.append(step)
-#now use these functions to plot the results
-print("now plotting")
-import matplotlib.pyplot as plt
-import matplotlib
-font = {'family' : 'normal',
-        'weight' : 'normal',
-        'size'   : 12}
+        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
+        prc_25.append(sum(current_25)/len(current_25))
+        prc_50.append(sum(current_50)/len(current_50))
+        prc_75.append(sum(current_75)/len(current_75))
+        steps_plot.append(step)
+    #now use these functions to plot the results
+    print("now plotting")
+    import matplotlib.pyplot as plt
+    import matplotlib
+    font = {'family' : 'normal',
+            'weight' : 'normal',
+            'size'   : 12}
 
-matplotlib.rc('font', **font)
-axis_font_size = 20
+    matplotlib.rc('font', **font)
+    axis_font_size = 20
 
 def plot_performance(steps,p25,p50,p75,title,algo): #this is the function I need to replicate
     fig, ax = plt.subplots() #Next three lines set the height and width of figure
@@ -122,6 +123,5 @@ def plot_this(a1,a2,title,algo):
     plt.xlabel("time step",fontsize = axis_font_size)
     plt.ylabel("reward",fontsize = axis_font_size)
     plt.show()
-plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm')
-plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm')
+
 
