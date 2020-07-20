@@ -1,3 +1,5 @@
+from typing import Dict, Tuple
+
 if __name__ == '__main__':
     # This is a terrible hack just to be able to execute this file directly
     import sys
@@ -10,7 +12,6 @@ from worlds.grid_world import GridWorldParams, GridWorld, run_human_agent
 import random, math, os
 import numpy as np
 import random, math, os
-import numpy as np
 from reward_machines.env_reward_machine import EnvRewardMachine
 
 """
@@ -28,7 +29,7 @@ class OfficeWorld(GridWorld):
     def __init__(self, params):
         super().__init__(params)
         self.env_game_over = False
-        self.rm_file = "../experiments/office/reward_machines/t1.txt"
+        self.rm_file = "../../experiments/office/reward_machines/t1.txt"
         self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
@@ -36,6 +37,7 @@ class OfficeWorld(GridWorld):
 
     def get_perfect_rm(self):
         # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
+        #changes depending on the self.rm_file that you use.
         delta_u = {}
         delta_u[(0, 'e')] = 1
         delta_u[(1, 'g')] = 2
@@ -278,10 +280,102 @@ class OfficeWorld(GridWorld):
         # why abcefg, look at _load_map and see what labels I'm giving to the Empty-class objects
         return "abcefg"
 
-    # play is an old function used for debugging office world; use test_env() instead
+
     def get_all_events(self):
         return "abcefg"
 
+#Office World Active is the Office world from the active learning paper.
+#it is defined as a subclass of Office world because this construction makes it easier to preserve parts of office world that are necessary
+#without copying a bunch of code
+class OfficeWorldActive(OfficeWorld):
+    def __init__(self,params):
+        super().__init__(params)
+        self.rm_file = "../../experiments/office/reward_machines/active_task.txt"
+        self.env_rm = EnvRewardMachine(self.rm_file)
+        self.current_state = self.get_state()  # get the initial reward machine and MDP state
+        self.u1 = self.env_rm.get_initial_state()
+
+    def get_perfect_rm(self):
+        # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
+        #changes depending on the self.rm_file that you use.
+        delta_u = {}
+        delta_u[(0, 'a')] = 1
+        delta_u[(1, 'b')] = 2
+        return delta_u
+
+    def _load_map(self, file_map):
+        # NOTE: file_map is not used. it is here so that the office world can be a subclass of Grid World
+        # Creating the map
+        self.map = [[Empty(x, y, label=" ") for y in range(9)] for x in range(12)]  # an empty 12x9 list
+        self.objects = {}
+        # env.agent = tuple([2, 2])
+        # env.coffee = tuple([3, 5])
+        # env.init_agent = tuple([2, 2])
+        # env.locations = {(1, 1): 'a', (10, 1): 'b', (7, 3): 'c', (7, 4): 'e', (3, 5): 'f', (4, 4): 'g', (1, 8): 'd'}
+        # env.mail = tuple([7, 4])
+        self.objects[(1, 1)] = "a"
+        self.map[1][1] = Empty(1, 1, label="a")  # this line adds stuff to the map
+        self.objects[(10, 1)] = "b"
+        self.map[10][1] = Empty(10, 1, label="b")
+        # self.objects[(10,7)] = "c"
+        self.objects[(1, 3)] = "c"
+        self.map[1][3] = Empty(1, 3, label="c")
+        # Adding walls
+        self.forbidden_transitions = set()
+
+        #set up self.map_classes
+        self.map_classes = self.get_map_classes()
+
+        # general grid/walls
+        for x in range(12):
+            for y in [0]:
+                self.forbidden_transitions.add((x,y,Actions.down))
+            for y in [8]:
+                self.forbidden_transitions.add((x,y,Actions.up))
+        for y in range(9):
+            for x in [0]:
+                self.forbidden_transitions.add((x,y,Actions.left))
+            for x in [11]:
+                self.forbidden_transitions.add((x,y,Actions.right))
+        # Adding the agent
+        self.agent = Agent(2,1,Actions)
+
+        # create self.rooms for gridworld dependency
+        """Description of self.rooms
+        self.rooms = [ [ ] ....]
+        a list of lists. each inner list has two tuples.
+        The first tuple corresponds to the bottom left coordinate of a room
+        The second tuple corresponds to the top right coordinate of a room
+        ie self.rooms = [ [ (0,0), (2,2) ], [(0,3), (2,5)] ] means that there are two rooms; one covers the area 0,0 to 2,2 etc.
+        since our world is a 9x12 grid with 12 rooms of equal size (each room is a 3 space by 3 space)
+        A formula is used to create self.rooms for office world.
+        """
+        self.rooms = []  # initialize rooms to be empty; the for loop fills it up
+        for y1 in [0, 3, 6]:
+            y2 = y1 + 2  # x2 will be 2 when x1 = 0, etc
+            for x1 in [0, 3, 6, 9]:
+                x2 = x1 + 2
+                tuple_1 = (x1, y1)
+                tuple_2 = (x2, y2)
+                list_1 = [tuple_1, tuple_2]
+                self.rooms.append(list_1)
+        self.map_locations = []  # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                if str(self.map[i][j]) != "X":
+                    room_id = self._get_room(i, j)
+                    self.map_locations.append((room_id, i, j))
+    def get_map_classes(self):
+            # Returns the string with all the classes of objects that are part of this domain
+            # why abcefg, look at _load_map and see what labels I'm giving to the Empty-class objects
+            return "abc"
+
+    # play is an old function used for debugging office world; use test_env() instead
+    def get_all_events(self):
+        return "abc"
+
+
+# play is an old function used for debugging office world; use test_env() instead
 def play():
     from reward_machines.reward_machine import RewardMachine
 
@@ -348,7 +442,7 @@ def play():
 # this method is for debugging. If you create a new method and want to see what it returns, add code here, then click run
 def test_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
-    game = OfficeWorld(params)
+    game = OfficeWorldActive(params)
     #x = game.get_features()
     #print(x)
     #print("Length of get features is " + str(len(x)))

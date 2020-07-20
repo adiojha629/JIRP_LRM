@@ -288,8 +288,8 @@ if __name__ == "__main__":
     algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
     #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
 
-    """For now only office world will work with LRM"""
-    worlds     = ["office", "craft", "traffic"]
+    """For now only office world/office world active will work with LRM"""
+    worlds     = ["office","office_active", "craft", "traffic"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 

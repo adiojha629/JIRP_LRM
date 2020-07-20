@@ -285,7 +285,7 @@ def run_human_agent(game, max_time):
     str_to_action = {"w":Actions.up.value,"d":Actions.right.value,"s":Actions.down.value,"a":Actions.left.value}
     # play the game!
     trace = [(game.get_events(),0.0)]
-    rm = game.get_perfect_rm()
+    rm = game.get_perfect_rm
     u1 = 0
     for t in range(max_time):
         # Showing game
