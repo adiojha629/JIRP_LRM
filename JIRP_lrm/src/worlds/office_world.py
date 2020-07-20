@@ -34,6 +34,7 @@ class OfficeWorld(GridWorld):
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
         self.actions = [Actions.up.value, Actions.right.value, Actions.down.value, Actions.left.value]
+        print("THIS IS OFFICE WORLD")
 
     def get_perfect_rm(self):
         # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
@@ -294,6 +295,7 @@ class OfficeWorldActive(OfficeWorld):
         self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.env_rm.get_initial_state()
+        print("THIS IS OFFICE WORLD ACTIVE")
 
     def get_perfect_rm(self):
         # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy

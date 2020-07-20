@@ -160,7 +160,6 @@ def run_lrm(env_params, lp, rl):
     return train_rewards, rm_scores, rm.get_info(),reward_list
 
 def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
-    
     time_init = time.time()
     random.seed(n_seed)
     for trail in trails:
@@ -173,7 +172,8 @@ def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
 
     # Showing results
     print("Time:", "%0.2f"%((time.time() - time_init)/60), "mins\n")
-    print_results()
+    #print_results()
+
 def print_results():
     plot_dict ={}
     #for loop here
