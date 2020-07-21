@@ -162,12 +162,12 @@ def run_lrm(env_params, lp, rl):
 def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
     time_init = time.time()
     random.seed(n_seed)
-    for trail in range(trails):
+    for trail in [0,1]:
         print("Trail: " + str(trail))
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
             # Saving the results
-            out_folder = "LRM/" + rl + "/trail_"+str(trail) + "/" + env_params.game_type
+            out_folder = "LRM/" + rl + "/active_example/trail_"+str(trail)
             save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
 
     # Showing results

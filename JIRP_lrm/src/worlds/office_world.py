@@ -339,6 +339,25 @@ class OfficeWorldActive(OfficeWorld):
                 self.forbidden_transitions.add((x,y,Actions.left))
             for x in [11]:
                 self.forbidden_transitions.add((x,y,Actions.right))
+        for x in range(12):
+             for y in [0,3,6]:
+                 self.forbidden_transitions.add((x,y,Actions.down))
+                 self.forbidden_transitions.add((x,y+2,Actions.up))
+        for y in range(9):
+             for x in [0,3,6,9]:
+                 self.forbidden_transitions.add((x,y,Actions.left))
+                 self.forbidden_transitions.add((x+2,y,Actions.right))
+         # adding 'doors'
+        for y in [1,7]:
+             for x in [2,5,8]:
+                 self.forbidden_transitions.remove((x,y,Actions.right))
+                 self.forbidden_transitions.remove((x+1,y,Actions.left))
+        for x in [1,4,7,10]:
+             self.forbidden_transitions.remove((x,5,Actions.up))
+             self.forbidden_transitions.remove((x,6,Actions.down))
+        for x in [1,10]:
+             self.forbidden_transitions.remove((x,2,Actions.up))
+             self.forbidden_transitions.remove((x,3,Actions.down))
         # Adding the agent
         self.agent = Agent(2,1,Actions)
 
