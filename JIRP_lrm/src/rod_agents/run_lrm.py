@@ -7,6 +7,7 @@ from rod_agents.learning_utils import save_results
 from worlds.game import Game
 import numpy as np
 from data_processing import plot_performance,plot_this
+import matplotlib.pyplot as plt
 """
 - Pseudo-code:
     - Run 'n' random episodes until completion or timeout
@@ -64,7 +65,9 @@ def run_lrm(env_params, lp, rl):
                 break 
         # adding this trace to the set of traces that we use to learn the rm
         rm.add_trace(trace)
-
+    plt.plot(reward_list,label ="rewards from collecting random traces")
+    plt.legend()
+    plt.show()
     # Learning the reward machine using the collected traces
     print("Learning a reward machines...")
     _, info = rm.learn_the_reward_machine()
