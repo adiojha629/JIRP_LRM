@@ -162,7 +162,7 @@ def run_lrm(env_params, lp, rl):
 def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
     time_init = time.time()
     random.seed(n_seed)
-    for trail in [2]:
+    for trail in trails:
         print("Trail: " + str(trail))
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
@@ -178,7 +178,7 @@ def print_results():
     plot_dict ={}
     #for loop here
     for trial in range(10):
-        file_name = "../results/LRM/lrm-qrm/trail_"+str(trial)+"/officeworld/lrm-lrm-qrm-0_rewards_over_time.txt"
+        file_name = "../results/LRM/lrm-qrm/active_example/trail_" + str(trial) + "/lrm-lrm-qrm-0_rewards_over_time.txt"
         file = open(file_name)
         lines = file.readlines()
         file.close()
@@ -187,14 +187,6 @@ def print_results():
         reward_list = [int(line[line.find("|")+1:]) for line in lines] #get just the rewards
         #print(reward_list[-1])
         print("rewards for trail "+str(trial)+" obtained")
-        if 2 in reward_list: #get rewards per step
-            print("editing file")
-            list_new = []
-            last_num = 0
-            for num in reward_list:
-                list_new.append(num-last_num)
-                last_num = num
-            reward_list = list_new.copy()
         #at this point reward list has rewards per step
         print("updateing plot_dict")
         for step in range(int(2e6)):
