@@ -28,7 +28,12 @@ def run_lrm(env_params, lp, rl):
     Returns the training rewards
     """
     # Initializing parameters and the game
+    test_frq = 1000
+    test_epi_length = 1000
+    plot_dict = dict()
+    test_step = 0
     env = Game(env_params)
+    test_env = Game(env_params)
     rm = RewardMachine(lp.rm_u_max, lp.rm_preprocess, lp.rm_tabu_size, lp.rm_workers, lp.rm_lr_steps, env.get_perfect_rm(), lp.use_perfect_rm)
     actions = env.get_actions()
     policy = None
@@ -54,7 +59,23 @@ def run_lrm(env_params, lp, rl):
             reward_list.append(reward)
             trace.append((o2_events,reward))
             step += 1
-            # Testing
+            #seeing how well model is doing
+            if step % test_frq == 0: #let's test agent
+                done = False
+                reward = 0
+                test_env.restart()
+                for _ in range(test_epi_length):
+                    if not(done):
+                        act = random.choice(actions)
+                        reward,done = test_env.execute_action(act)
+                    else:
+                        print("Ageng finsihed early") #for debugging
+                test_step += test_frq
+                if test_step in plot_dict.keys():
+                    plot_dict[test_step].append(reward)
+                else:
+                    plot_dict[test_step] = [reward]
+            # Testing (LRM testing, not what we need to compare with JIRP)
             if step % lp.test_freq == 0:
                 print("Step: %d\tTrain: %0.1f"%(step, reward_total - last_reward))
                 train_rewards.append((step, reward_total - last_reward))
@@ -65,9 +86,6 @@ def run_lrm(env_params, lp, rl):
                 break 
         # adding this trace to the set of traces that we use to learn the rm
         rm.add_trace(trace)
-    plt.plot(reward_list,label ="rewards from collecting random traces")
-    plt.legend()
-    plt.show()
     # Learning the reward machine using the collected traces
     print("Learning a reward machines...")
     _, info = rm.learn_the_reward_machine()
@@ -109,7 +127,29 @@ def run_lrm(env_params, lp, rl):
             reward_total += reward
             reward_list.append(reward)
             step += 1
-
+            if step % test_frq == 0: #let's test agent
+                done = False
+                reward = 0
+                test_env.restart()
+                test_o1_events   = test_env.get_events()
+                test_o1_features = test_env.get_features()
+                test_u1 = rm.get_initial_state()
+                for _ in range(test_epi_length):
+                    if not(done):
+                        act = policy.get_best_action(test_o1_features, test_u1, lp.epsilon)
+                        reward,done = test_env.execute_action(act)
+                        test_o2_events   = env.get_events()
+                        test_o2_features = env.get_features()
+                        test_u2 = rm.get_next_state(u1, o2_events)
+                        test_o1_events, test_o1_features, test_u1 = test_o2_events, test_o2_features, test_u2
+                        print("Agent took action")
+                    else:
+                        print("Agent finsihed early") #for debugging
+                test_step += test_frq
+                if test_step in plot_dict.keys():
+                    plot_dict[test_step].append(reward)
+                else:
+                    plot_dict[test_step] = [reward]
             # updating the current RM if needed
             rm.update_rewards(u1, o2_events, reward)
             if done: rm.add_terminal_observations(o2_events)
@@ -158,6 +198,42 @@ def run_lrm(env_params, lp, rl):
     if policy is not None:
         policy.close()
         policy = None
+
+    print(len(plot_dict))#is 40
+    rewards_plot = list()
+    prc_25 = list()
+    prc_50 = list()
+    prc_75 = list()
+    # Buffers for plots
+    current_step = list()
+    current_25 = list()
+    current_50 = list()
+    current_75 = list()
+    steps_plot = list()
+    for step in plot_dict.keys():
+        if len(current_step) < 10:
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+        else:
+            current_step.pop(0)
+            current_25.pop(0)
+            current_50.pop(0)
+            current_75.pop(0)
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+
+        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
+        prc_25.append(sum(current_25)/len(current_25))
+        prc_50.append(sum(current_50)/len(current_50))
+        prc_75.append(sum(current_75)/len(current_75))
+        steps_plot.append(step)
+    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm 3 symbol OfficeWorld Random action')
+    plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm 3 symbol OfficeWorld Random Action')
+    adi = input("Continue?")
 
     # return the trainig rewards
     return train_rewards, rm_scores, rm.get_info(),reward_list
