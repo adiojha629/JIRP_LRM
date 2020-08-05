@@ -67,6 +67,7 @@ class OfficeWorld(GridWorld):
         next_state = s2
         self.u1 = u2
         self.current_state = next_state
+        self.env_game_over = self.env_rm.is_terminal_state(u2)
         done = self.get_is_done()
         return reward, done
 
@@ -507,11 +508,11 @@ def test_env():
         print("Reward at THIS STATE is " + str(reward))
         total_reward = total_reward + reward
         print("The total reward given is " + str(total_reward))
-        x = game._get_event_features()
-        print(x)
-        print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
-        print(game._get_map_features())
-        print(game._get_event_features())
+        #x = game._get_event_features()
+        #print(x)
+        #print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+        #print(game._get_map_features())
+        #print(game._get_event_features())
 
 
 # This code allow to play a game (for debugging purposes)

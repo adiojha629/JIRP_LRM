@@ -15,11 +15,12 @@ class GameParams:
 
 class Game:
 #note that not all methods are defined in officeworld; some methods may not be needed. they are included here for the sake of being consistant with rodrigo's code
-    def __init__(self, params):
+    def __init__(self, params,label):
         self.params = params
-        self.restart()
+        self.restart(label)
 
-    def restart(self):
+    def restart(self,label):
+        #print("Label is ",label)
         if self.params.game_type == "craftworld":
             self.game = CraftWorld(self.params.game_params)
         if self.params.game_type == "trafficworld":
