@@ -7,6 +7,9 @@ from worlds.game_objects import *
 import random, math, os
 import numpy as np
 import random
+#additional libraries needed for LRM compabitility
+from reward_machines.env_reward_machine import EnvRewardMachine
+from worlds.grid_world import GridWorldParams, GridWorld, run_human_agent
 
 """
 Auxiliary class with the configuration parameters that the Game class needs
@@ -31,6 +34,16 @@ class CraftWorld:
         if self.consider_night:
             self.sunrise = 5
             self.sunset  = 21
+        #code added for LRM compatibility:
+        f = open("../../experiments/craft/tests/ground_truth.txt")
+        lines = [l.rstrip() for l in f]
+        f.close()
+        # setting the test attributes
+        self.rm_file = eval(lines[2])[0] #get the reward machine that defines the task 8.12.20
+        self.rm = EnvRewardMachine(self.rm_file) #make that reward machine 8.12.20
+        self.current_state = self.get_state()  # get the initial reward machine and MDP state
+        self.u1 = self.rm.get_initial_state()
+        self.actions = [Actions.up.value, Actions.right.value, Actions.down.value, Actions.left.value]
 
     def execute_action(self, a):
         """
