@@ -20,10 +20,10 @@ class CraftWorldParams:
         self.use_tabular_representation = use_tabular_representation
         self.movement_noise = movement_noise
         self.consider_night = consider_night
-
-class CraftWorld:
+class CraftWorld(GridWorld):
 
     def __init__(self, params):
+        super().__init__(params)
         self.params = params
         self._load_map(params.file_map)
         self.movement_noise = params.movement_noise
@@ -93,6 +93,19 @@ class CraftWorld:
         # So far, an action can only fail if the new position is a wall
         if action_succeeded:
             agent.change_position(ni,nj)
+        #code for LRM compatibility
+        u1 = self.u1
+        s1 = self.get_state()
+        events = self.get_events()  # get conditions of the game
+        u2 = self.rm.get_next_state(u1, events)  # get the next state
+        s2 = self.get_state()
+        reward = self.rm.get_reward(u1, u2, s1, a, s2)  # use the reward machine to generate the rewards
+        next_state = s2
+        self.u1 = u2
+        self.current_state = next_state
+        self.env_game_over = self.rm.is_terminal_state(u2)
+        done = self.env_game_over
+        return reward, done
 
     def get_state(self):
         return None # we are only using "simple reward machines" for the craft domain
@@ -152,7 +165,8 @@ class CraftWorld:
         return ret
 
     # The following methods return different feature representations of the map ------------
-    def get_features(self):
+    #methods commented out b/c get features defined in gridworld class
+    '''def get_features(self):
         # if self.params.use_tabular_representation:
         #     return self._get_features_one_hot_representation()
         # return self._get_features_manhattan_distance()
@@ -175,7 +189,7 @@ class CraftWorld:
             ret.append(self._steps_before_dark())
 
         return np.array(ret, dtype=np.float64)
-
+'''
 
     """
     Returns the Manhattan distance between 'obj' and the agent
@@ -186,7 +200,8 @@ class CraftWorld:
     """
     Returns a one-hot representation of the state (useful for the tabular case)
     """
-    def _get_features_one_hot_representation(self):
+    #method commented out b/c get features defined in gridworld class
+    '''def _get_features_one_hot_representation(self):
         if self.consider_night:
             N,M,T = self.map_height, self.map_width, self.sunset - self.sunrise + 3
             ret = np.zeros((N,M,T), dtype=np.float64)
@@ -195,7 +210,7 @@ class CraftWorld:
             N,M = self.map_height, self.map_width
             ret = np.zeros((N,M), dtype=np.float64)
             ret[self.agent.i,self.agent.j] = 1
-        return ret.ravel() # from 3D to 1D (use a.flatten() is you want to copy the array)
+        return ret.ravel() # from 3D to 1D (use a.flatten() is you want to copy the array)'''
 
     # The following methods create a string representation of the current state ---------
     """
@@ -261,7 +276,35 @@ class CraftWorld:
         f.close()
         # height width
         self.map_height, self.map_width = len(self.map_array), len(self.map_array[0])
-
+        #needed for grid world
+        self.map = [[Empty(x, y, label=" ") for y in range(self.map_height)] for x in range(self.map_width)]  # an empty 12x9 list
+        for i in self.map_array:
+            for j in self.map_array[i]:
+                entity = str(self.map_array[i][j])
+                if not("X" in entity or "A" in entity):
+                    #then the entity must be a empty, lets check the label
+                    if self.map_array[i][j].label != " ": #if the label is not " " then we put this entity in self.map
+                        self.map[i][j] = self.map_array[i][j]
+        #set up self.map_classes
+        self.map_classes = self.get_map_classes()
+        """Description of self.rooms
+        self.rooms = [ [ ] ....]
+        a list of lists. each inner list has two tuples.
+        The first tuple corresponds to the bottom left coordinate of a room
+        The second tuple corresponds to the top right coordinate of a room
+        ie self.rooms = [ [ (0,0), (2,2) ], [(0,3), (2,5)] ] means that there are two rooms; one covers the area 0,0 to 2,2 etc.
+        since our world is a 9x12 grid with 12 rooms of equal size (each room is a 3 space by 3 space)
+        A formula is used to create self.rooms for office world.
+        
+        Since craft world has only one room (the entire board) this is pretty simple
+        """
+        self.rooms = [[(0,0),(self.map_height-1, self.map_width-1)]]  # initialize rooms to be empty; the for loop fills it up
+        self.map_locations = []  # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations again needed for grid world 8.12.2020
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                if str(self.map[i][j]) != "X":
+                    room_id = self._get_room(i, j)
+                    self.map_locations.append((room_id, i, j))
 
 
 def play(params, task, max_time):
@@ -303,17 +346,62 @@ def play(params, task, max_time):
     game.show_map()
     return reward
 
+def test_the_env():
+    map = "../../experiments/craft/maps/map_0.map"
+    use_tabular_representation=True
+    consider_night=False
+    params = GridWorldParams(game_type="craftworld", file_map=map, movement_noise=0.05,use_tabular_representation=use_tabular_representation,consider_night=consider_night)
+    game = CraftWorld(params)
+    #x = game.get_features()
+    #print(x)
+    #print("Length of get features is " + str(len(x)))
+    # Print out the map so we can see where the agent is
+    game.show_map()
+    # Show the state of the reward machine
+    print("State of reward machine is " + str(game.u1))
+
+    # Show the Reward at this state
+    print("Reward at THIS STATE is " + str(game.rm.get_reward(game.u1, game.u1)))
+    print("State of MDP is " + str(game.current_state))
+    # have the variable 'total_reward' keep track of all the rewards given
+    total_reward = game.rm.get_reward(game.u1, game.u1)
+    print("The total reward given is " + str(total_reward))
+
+    # print(game.get_reward_list())
+    # print("Game.getfeaures() returns")
+    # print(game.get_features())
+    # dictionary to parse input
+    act_to_num = {"w": 0, "d": 1, "s": 2, "a": 3}
+    done = False  # since the game has started we know that the game is not done
+    while not done:
+        # ask for user input
+        act = input("Action? (w,a,s,d)")
+        # Check if the action is valid
+        if (act in act_to_num):
+            # then do that action
+            reward, done = game.execute_action(act_to_num[act])
+        else:
+            print("Invalid action")
+        # Show game map, states and rewards
+        game.show()
+        """
+      print(nxt_state)
+      print(str(type(nxt_state)))
+      print(reward)
+      print(str(type(reward)))
+      """
+        print("State of reward machine is " + str(game.u1))
+        print("State of MDP is " + str(game.current_state))
+        print("Reward at THIS STATE is " + str(reward))
+        total_reward = total_reward + reward
+        print("The total reward given is " + str(total_reward))
+        #x = game._get_event_features()
+        #print(x)
+        #print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+        #print(game._get_map_features())
+        #print(game._get_event_features())
+
 
 # This code allow to play a game (for debugging purposes)
 if __name__ == '__main__':
-    map = "../../experiments/craft/maps/map_0.map"
-    tasks = ["../../experiments/craft/reward_machines/t%d.txt"%i for i in [1,2,3,4,5,6,7,8,9,10]]
-    max_time = 100
-    use_tabular_representation=True
-    consider_night=False
-
-    for task in tasks:
-        while True:
-            params = CraftWorldParams(map, use_tabular_representation, consider_night)
-            if play(params, task, max_time) > 0:
-                break
+    test_the_env()

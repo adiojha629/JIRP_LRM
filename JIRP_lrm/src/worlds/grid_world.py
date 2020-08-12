@@ -6,10 +6,12 @@ import numpy as np
 Auxiliary class with the configuration parameters that the Game class needs
 """
 class GridWorldParams:
-    def __init__(self, game_type, file_map, movement_noise):
+    def __init__(self, game_type, file_map, movement_noise,consider_night = False,use_tabular_representation = False):
         self.game_type      = game_type
         self.file_map       = file_map
         self.movement_noise = movement_noise
+        self.consider_night = consider_night #for craftworld
+        self.use_tabular_representation = use_tabular_representation
 
 class GridWorld:
 
