@@ -234,7 +234,21 @@ class CraftWorld(GridWorld):
                 r += "\n"
             r += s
         return r
-
+    def get_perfect_rm(self):
+        # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
+        #changes depending on the self.rm_file that you use.
+        #I have not implemented this correctly, but it doesn't affect performance of LRM
+        delta_u = {}
+        delta_u[(0, 'e')] = 1
+        delta_u[(1, 'g')] = 2
+        delta_u[(2, 'c')] = 3
+        return delta_u
+    def get_map_classes(self):#used in grid world
+            # Returns the string with all the classes of objects that are part of this domain
+            # why abcefg, look at _load_map and see what labels I'm giving to the Empty-class objects
+            return "abcef"
+    def get_all_events(self):#same as get_map_classes, just different names
+        return self.get_map_classes()
     # The following methods create the map ----------------------------------------------
     def _load_map(self,file_map):
         """
@@ -278,8 +292,8 @@ class CraftWorld(GridWorld):
         self.map_height, self.map_width = len(self.map_array), len(self.map_array[0])
         #needed for grid world
         self.map = [[Empty(x, y, label=" ") for y in range(self.map_height)] for x in range(self.map_width)]  # an empty 12x9 list
-        for i in self.map_array:
-            for j in self.map_array[i]:
+        for i in range(len(self.map_array)):
+            for j in range(len(self.map_array[i])):
                 entity = str(self.map_array[i][j])
                 if not("X" in entity or "A" in entity):
                     #then the entity must be a empty, lets check the label
@@ -352,9 +366,9 @@ def test_the_env():
     consider_night=False
     params = GridWorldParams(game_type="craftworld", file_map=map, movement_noise=0.05,use_tabular_representation=use_tabular_representation,consider_night=consider_night)
     game = CraftWorld(params)
-    #x = game.get_features()
-    #print(x)
-    #print("Length of get features is " + str(len(x)))
+    x = game.get_features()
+    print(x)
+    print("Length of get features is " + str(len(x)))
     # Print out the map so we can see where the agent is
     game.show_map()
     # Show the state of the reward machine
@@ -383,7 +397,7 @@ def test_the_env():
         else:
             print("Invalid action")
         # Show game map, states and rewards
-        game.show()
+        game.show_map()
         """
       print(nxt_state)
       print(str(type(nxt_state)))
@@ -395,11 +409,11 @@ def test_the_env():
         print("Reward at THIS STATE is " + str(reward))
         total_reward = total_reward + reward
         print("The total reward given is " + str(total_reward))
-        #x = game._get_event_features()
-        #print(x)
-        #print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
-        #print(game._get_map_features())
-        #print(game._get_event_features())
+        x = game._get_event_features()
+        print(x)
+        print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
+        print(game._get_map_features())
+        print(game._get_event_features())
 
 
 # This code allow to play a game (for debugging purposes)

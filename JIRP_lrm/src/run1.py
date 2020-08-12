@@ -297,7 +297,7 @@ if __name__ == "__main__":
     parser.add_argument('--algorithm', default='lrm-qrm', type=str,
                         help='This parameter indicated which RL algorithm to use. The options are: ' + str(algorithms))
     """Change the below line's default to change the world (only office world works with LRM at this time) """
-    parser.add_argument('--world', default='office_active', type=str,
+    parser.add_argument('--world', default='craft', type=str,
                         help='This parameter indicated which world to solve. The options are: ' + str(worlds))
     """The below arguements are not uses in LRM"""
     parser.add_argument('--map', default=0, type=int, 
