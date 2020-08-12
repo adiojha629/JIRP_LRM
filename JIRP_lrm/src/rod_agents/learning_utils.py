@@ -35,7 +35,8 @@ def save_results(rewards, scores, rm_info, game_type, alg, rl, seed,reward_list)
         # saving the training rewards
         path_file = root_file + "_rewards_over_time.txt"
         f = open(path_file, 'w')
+        f.write("Test step\tReward\n")
         for step in range(len(reward_list)):
             # Training step \t reward
-            f.write("%d\t%d\n"%(step,reward_list[step]))
+            f.write("%d\t%d\n"%(reward_list[step][0],reward_list[step][1]))
         f.close()

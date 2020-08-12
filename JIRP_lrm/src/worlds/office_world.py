@@ -3,7 +3,6 @@ from typing import Dict, Tuple
 if __name__ == '__main__':
     # This is a terrible hack just to be able to execute this file directly
     import sys
-
     sys.path.insert(0, '../')
 
 from worlds.game_objects import Actions
@@ -13,7 +12,7 @@ import random, math, os
 import numpy as np
 import random, math, os
 from reward_machines.env_reward_machine import EnvRewardMachine
-
+from data_processing import plot_performance,plot_this
 """
 Auxiliary class with the configuration parameters that the Game class needs
 """
@@ -29,10 +28,14 @@ class OfficeWorld(GridWorld):
     def __init__(self, params):
         super().__init__(params)
         self.env_game_over = False
-        self.rm_file = "../experiments/office/reward_machines/t1.txt"
-        self.env_rm = EnvRewardMachine(self.rm_file)
+        f = open("../../experiments/office/tests/ground_truth.txt")
+        lines = [l.rstrip() for l in f]
+        f.close()
+        # setting the test attributes
+        self.rm_file = eval(lines[1])[0]
+        self.rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
-        self.u1 = self.env_rm.get_initial_state()
+        self.u1 = self.rm.get_initial_state()
         self.actions = [Actions.up.value, Actions.right.value, Actions.down.value, Actions.left.value]
         #print("THIS IS OFFICE WORLD")
 
@@ -48,7 +51,7 @@ class OfficeWorld(GridWorld):
     def get_is_done(self):
         return self.env_game_over
 
-    def execute_action(self, a):
+    def execute_action(self, a): #return reward done, done = True when epi is over
         """
         We execute 'action' in the game
         return reward and done
@@ -61,13 +64,13 @@ class OfficeWorld(GridWorld):
         u1 = self.u1
         s1 = self.get_state()
         events = self.get_events()  # get conditions of the game
-        u2 = self.env_rm.get_next_state(u1, events)  # get the next state
+        u2 = self.rm.get_next_state(u1, events)  # get the next state
         s2 = self.get_state()
-        reward = self.env_rm.get_reward(u1, u2, s1, a, s2)  # use the reward machine to generate the rewards
+        reward = self.rm.get_reward(u1, u2, s1, a, s2)  # use the reward machine to generate the rewards
         next_state = s2
         self.u1 = u2
         self.current_state = next_state
-        self.env_game_over = self.env_rm.is_terminal_state(u2)
+        self.env_game_over = self.rm.is_terminal_state(u2)
         done = self.get_is_done()
         return reward, done
 
@@ -292,10 +295,8 @@ class OfficeWorld(GridWorld):
 class OfficeWorldActive(OfficeWorld):
     def __init__(self,params):
         super().__init__(params)
-        self.rm_file = "../experiments/office/reward_machines/active_task.txt"
-        self.env_rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
-        self.u1 = self.env_rm.get_initial_state()
+        self.u1 = self.rm.get_initial_state()
         #print("THIS IS OFFICE WORLD ACTIVE")
 
     def get_perfect_rm(self):
@@ -462,7 +463,7 @@ def play():
 
 
 # this method is for debugging. If you create a new method and want to see what it returns, add code here, then click run
-def test_env():
+def test_the_env():
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
     game = OfficeWorldActive(params)
     #x = game.get_features()
@@ -474,10 +475,10 @@ def test_env():
     print("State of reward machine is " + str(game.u1))
 
     # Show the Reward at this state
-    print("Reward at THIS STATE is " + str(game.env_rm.get_reward(game.u1, game.u1)))
+    print("Reward at THIS STATE is " + str(game.rm.get_reward(game.u1, game.u1)))
     print("State of MDP is " + str(game.current_state))
     # have the variable 'total_reward' keep track of all the rewards given
-    total_reward = game.env_rm.get_reward(game.u1, game.u1)
+    total_reward = game.rm.get_reward(game.u1, game.u1)
     print("The total reward given is " + str(total_reward))
 
     # print(game.get_reward_list())
@@ -514,15 +515,82 @@ def test_env():
         #print(game._get_map_features())
         #print(game._get_event_features())
 
+def test_random_action():
+    #parameters for testing agent throughout training: 8/7/20
+    test_frq = 1000 #how often we test agent 8/7/20
+    test_epi_length = 1000 #how long we test agent 8/7/20
+    plot_dict = dict() #used for plotting rewards over time from tests 8/7/20
+    test_step = 0 #used by plot_dict (variable above) 8/7/20
+    #parameters to study while testing
+    num_of_suc = 0 #how many times does the agent complete an episode in testing 8.7.20
+    time_to_suc = [] #track how long it took agent to complete episode 8.7.20
 
+    params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
+    test_env = OfficeWorldActive(params) #environement for testing 8.7.20
+
+    actions = test_env.get_actions()
+
+    for test in range(200): #we test 200 times in run_lrm.py
+        test_env = OfficeWorldActive(params) #reset the environment
+        test_reward = 0
+        test_done = False
+        for test_trail in range(test_epi_length): #this is the testing loop
+            if not(test_done): #if an episode isn't complete
+                act = random.choice(actions) #choose a random action
+                test_reward,test_done = test_env.execute_action(act) #execute that action
+            else:#if an episode was completed:
+                num_of_suc += 1 #increment number of successes but agent to complete an episode 8.7.20
+                time_to_suc.append(test_trail) #record how long it took to complete an episode 8.7.20
+                break #break out of for loop
+        test_step += test_frq #increment test_step by the test_frq
+        if test_step in plot_dict.keys(): #this if/else updates plot_dict
+            plot_dict[test_step].append(test_reward) #this code was copied from final-i-caps
+        else:
+            plot_dict[test_step] = [test_reward]
+    assert len(plot_dict) == 200 #we check that the agent was tested 2e5/test_frq = 2e5/1e3 = 2e2 = 200 times
+    assert len(time_to_suc) == num_of_suc #the number of completed episodes should match how many 'times to completed episodes' we recorded
+    import matplotlib.pyplot as plt
+    rewards_plot = list()
+    prc_25 = list()
+    prc_50 = list()
+    prc_75 = list()
+    # Buffers for plots
+    current_step = list()
+    current_25 = list()
+    current_50 = list()
+    current_75 = list()
+    steps_plot = list()
+    for step in plot_dict.keys():
+        if len(current_step) < 10:
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+        else:
+            current_step.pop(0)
+            current_25.pop(0)
+            current_50.pop(0)
+            current_75.pop(0)
+            current_25.append(np.percentile(np.array(plot_dict[step]),25))
+            current_50.append(np.percentile(np.array(plot_dict[step]),50))
+            current_75.append(np.percentile(np.array(plot_dict[step]),75))
+            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+
+        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
+        prc_25.append(sum(current_25)/len(current_25))
+        prc_50.append(sum(current_50)/len(current_50))
+        prc_75.append(sum(current_75)/len(current_75))
+        steps_plot.append(step)
+    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm 3 symbol OfficeWorld Random Action')
+    plot_this(steps_plot,rewards_plot,"Raw Reward vs. Time Step",'LRM-qrm 3 symbol OfficeWorld Random Action')
+    plt.plot(time_to_suc,label = "Number of steps to complete episode with random action")
+    plt.title("Steps to complete episode\nNumber of Successes = "+str(num_of_suc)+"/200 tests\nAverage number of steps = "+str(np.average(time_to_suc)))
+    plt.show()
+    adi = input("Continue?")
 # This code allow to play a game (for debugging purposes)
 # It runs test_env()
 if __name__ == '__main__':
     # play()
-    test_env()
-    """
-    params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
-    game = OfficeWorld(params)
-    game.show()
-    print(game._get_map_features())
-    """
+    #test_env()
+    #test_random_action()
+    test_the_env()

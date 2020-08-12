@@ -338,7 +338,9 @@ def run_qlearning_test(reward_machines, task_params, rm, rm_true, is_learned, q,
         # w=0
         # w_new=0
 
-        q[s][w][a] = (1-alpha)*q[s][w][a] + alpha*(r + gamma*np.amax(q[s_new][w_new]))
+        q[s][w][a] = (1-alpha)*q[s][w][a] + alpha*(r + gamma*np.amax(q[s_new][w_new]))#this is the q learning update line
+        #w stands for a history of what symbols the agent has encountered
+        #therefore we are creating a 3 dimensional q table
 
         # q[s][w][a] = q[s][w][a] + alpha * (r + gamma * np.amax(q[s_new][w_new])- q[s][w][a])
 

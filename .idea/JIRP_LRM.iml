@@ -23,6 +23,7 @@
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/scripts" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/tmp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/venv" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/JIRP_lrm/results" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (venv)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

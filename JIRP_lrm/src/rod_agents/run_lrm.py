@@ -7,6 +7,7 @@ from rod_agents.learning_utils import save_results
 from worlds.game import Game
 import numpy as np
 from data_processing import plot_performance,plot_this
+import os, pickle
 import matplotlib.pyplot as plt
 """
 - Pseudo-code:
@@ -28,21 +29,26 @@ def run_lrm(env_params, lp, rl):
     Returns the training rewards
     """
     # Initializing parameters and the game
-    test_frq = 1000
-    test_epi_length = 1000
-    plot_dict = dict()
-    test_step = 0
     env = Game(env_params,label="train")
-    test_env = Game(env_params,label="test")
     rm = RewardMachine(lp.rm_u_max, lp.rm_preprocess, lp.rm_tabu_size, lp.rm_workers, lp.rm_lr_steps, env.get_perfect_rm(), lp.use_perfect_rm)
     actions = env.get_actions()
     policy = None
     train_rewards = []
     rm_scores     = []
     reward_total = 0
-    reward_list = [reward_total]
+    reward_list = []
     last_reward  = 0
     step = 0
+
+    #parameters for testing agent throughout training: 8/7/20
+    test_frq = 200 #how often we test agent 8/7/20
+    test_epi_length = 200 #how long we test agent 8/7/20
+    #plot_dict = dict() #used for plotting rewards over time from tests 8/7/20
+    test_step = 0 #used by plot_dict (variable above) 8/7/20
+    test_env = Game(env_params,label="test") #environment used for testing 8/7/2020
+    #parameters to study while testing
+    #num_of_suc = 0 #how many times does the agent complete an episode in testing 8.7.20
+    #time_to_suc = [] #track how long it took agent to complete episode 8.7.20
     # Collecting random traces for learning the reward machine
     print("Collecting random traces...")
     while step < lp.rm_init_steps:
@@ -52,29 +58,27 @@ def run_lrm(env_params, lp, rl):
         for _ in range(lp.episode_horizon):
             # executing a random action
             a = random.choice(actions)
-            #print(env)
             reward, done = env.execute_action(a)
             o2_events = env.get_events()
-            reward_total += reward
-            reward_list.append(reward)
             trace.append((o2_events,reward))
+            reward_total+=reward
             step += 1
-            #seeing how well model is doing
-            if step % test_frq == 0: #let's test agent
-                test_done = False
-                test_reward = 0
+            '''Code for testing agent performance'''
+            if step % test_frq == 0: #We test the model if a test_frq number of time steps have passed
+                #below we reset the environment, reward, and done variables
                 test_env.restart("test")
-                for adi in range(test_epi_length):
-                    if not(test_done):
-                        act = random.choice(actions)
-                        test_reward,test_done = test_env.execute_action(act)
-                    else:
-                        break
-                test_step += test_frq
-                if test_step in plot_dict.keys():
-                    plot_dict[test_step].append(test_reward)
-                else:
-                    plot_dict[test_step] = [test_reward]
+                test_reward = 0
+                test_done = False
+                for test_trail in range(test_epi_length): #this is the testing loop
+                    if not(test_done): #if an episode isn't complete
+                        act = random.choice(actions) #choose a random action
+                        test_reward,test_done = test_env.execute_action(act) #execute that action
+                    else:#if an episode was completed:
+                        #num_of_suc += 1 #increment number of successes but agent to complete an episode 8.7.20
+                        #time_to_suc.append(test_trail) #record how long it took to complete an episode 8.7.20
+                        break #break out of for loop
+                test_step += test_frq #increment test_step by the test_frq
+                reward_list.append([test_step,test_reward])
             # Testing (LRM testing, not what we need to compare with JIRP)
             if step % lp.test_freq == 0:
                 print("Step: %d\tTrain: %0.1f"%(step, reward_total - last_reward))
@@ -82,50 +86,11 @@ def run_lrm(env_params, lp, rl):
                 last_reward = reward_total
             # checking if the episode finishes
             if done or lp.rm_init_steps <= step:
-                if done: rm.add_terminal_observations(o2_events)
-                break 
+                if done:rm.add_terminal_observations(o2_events)
+                break
         # adding this trace to the set of traces that we use to learn the rm
         rm.add_trace(trace)
     print("Done with random action")
-    print("Plot dict has a length of ",len(plot_dict))
-    rewards_plot = list()
-    prc_25 = list()
-    prc_50 = list()
-    prc_75 = list()
-    # Buffers for plots
-    current_step = list()
-    current_25 = list()
-    current_50 = list()
-    current_75 = list()
-    steps_plot = list()
-    for step in plot_dict.keys():
-        if len(current_step) < 10:
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-        else:
-            current_step.pop(0)
-            current_25.pop(0)
-            current_50.pop(0)
-            current_75.pop(0)
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-
-        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
-        prc_25.append(sum(current_25)/len(current_25))
-        prc_50.append(sum(current_50)/len(current_50))
-        prc_75.append(sum(current_75)/len(current_75))
-        steps_plot.append(step)
-    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm 3 symbol OfficeWorld')
-    plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm 3 symbol OfficeWorld')
-    adi = input("Continue?")
-
-
-
-
     # Learning the reward machine using the collected traces
     print("Learning a reward machines...")
     #adi = input("continue?")
@@ -161,11 +126,9 @@ def run_lrm(env_params, lp, rl):
             o2_events   = env.get_events()
             o2_features = env.get_features()
             u2 = rm.get_next_state(u1, o2_events)
-
+            reward_total+=reward
             # updating the number of steps and total reward
             trace.append((o2_events,reward))
-            reward_total += reward
-            reward_list.append(reward)
             step += 1
             if step % test_frq == 0: #let's test agent
                 test_done = False
@@ -187,50 +150,7 @@ def run_lrm(env_params, lp, rl):
                         break
                         print("Agent finsihed early with policy") #for debugging# Aug 5 14;48; the agent does finish early now
                 test_step += test_frq
-                if test_step in plot_dict.keys():
-                    plot_dict[test_step].append(test_reward)
-                else:
-                    plot_dict[test_step] = [test_reward]
-                #if test_reward == 1:
-                 #   print("This is plot_dict")
-                  #  print(plot_dict)
-
-            '''if step >= int(1e6):
-                print(len(plot_dict))
-                rewards_plot = list()
-                prc_25 = list()
-                prc_50 = list()
-                prc_75 = list()
-                # Buffers for plots
-                current_step = list()
-                current_25 = list()
-                current_50 = list()
-                current_75 = list()
-                steps_plot = list()
-                for step in plot_dict.keys():
-                    if len(current_step) < 10:
-                        current_25.append(np.percentile(np.array(plot_dict[step]),25))
-                        current_50.append(np.percentile(np.array(plot_dict[step]),50))
-                        current_75.append(np.percentile(np.array(plot_dict[step]),75))
-                        current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-                    else:
-                        current_step.pop(0)
-                        current_25.pop(0)
-                        current_50.pop(0)
-                        current_75.pop(0)
-                        current_25.append(np.percentile(np.array(plot_dict[step]),25))
-                        current_50.append(np.percentile(np.array(plot_dict[step]),50))
-                        current_75.append(np.percentile(np.array(plot_dict[step]),75))
-                        current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-
-                    rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
-                    prc_25.append(sum(current_25)/len(current_25))
-                    prc_50.append(sum(current_50)/len(current_50))
-                    prc_75.append(sum(current_75)/len(current_75))
-                    steps_plot.append(step)
-                plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm 3 symbol OfficeWorld')
-                plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm 3 symbol OfficeWorld')
-                adi = input("Continue?")'''
+                reward_list.append([test_step,test_reward])
 
             # updating the current RM if needed
             rm.update_rewards(u1, o2_events, reward)
@@ -278,118 +198,22 @@ def run_lrm(env_params, lp, rl):
     if policy is not None:
         policy.close()
         policy = None
-
-    print(len(plot_dict))
-    rewards_plot = list()
-    prc_25 = list()
-    prc_50 = list()
-    prc_75 = list()
-    # Buffers for plots
-    current_step = list()
-    current_25 = list()
-    current_50 = list()
-    current_75 = list()
-    steps_plot = list()
-    for step in plot_dict.keys():
-        if len(current_step) < 10:
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-        else:
-            current_step.pop(0)
-            current_25.pop(0)
-            current_50.pop(0)
-            current_75.pop(0)
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
-
-        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
-        prc_25.append(sum(current_25)/len(current_25))
-        prc_50.append(sum(current_50)/len(current_50))
-        prc_75.append(sum(current_75)/len(current_75))
-        steps_plot.append(step)
-    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm 3 symbol OfficeWorld')
-    plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm 3 symbol OfficeWorld')
-    adi = input("Continue?")
-
     # return the trainig rewards
     return train_rewards, rm_scores, rm.get_info(),reward_list
 
 def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
     time_init = time.time()
-    random.seed(n_seed)
+    #random.seed(n_seed)
     for trail in trails:
         print("Trail: " + str(trail))
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
             # Saving the results
-            out_folder = "LRM/" + rl + "/active_example/trail_"+str(trail)
+            out_folder = "LRM/" + rl + "/task_abaca/trail_"+str(trail)
             save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
 
     # Showing results
     print("Time:", "%0.2f"%((time.time() - time_init)/60), "mins\n")
     #print_results()
 
-def print_results():
-    plot_dict ={}
-    #for loop here
-    for trial in range(10):
-        file_name = "../results/LRM/lrm-qrm/active_example/trail_" + str(trial) + "/lrm-lrm-qrm-0_rewards_over_time.txt"
-        file = open(file_name)
-        lines = file.readlines()
-        file.close()
-        lines = lines[1:]
-        lines = [line.replace("\n","").replace("\t","|") for line in lines]
-        reward_list = [int(line[line.find("|")+1:]) for line in lines] #get just the rewards
-        #print(reward_list[-1])
-        print("rewards for trail "+str(trial)+" obtained")
-        #at this point reward list has rewards per step
-        print("updateing plot_dict")
-        for step in range(int(2e6)):
-            reward_at_step = reward_list[step]
-            if step in plot_dict.keys():
-                plot_dict[step].append(reward_at_step)
-            else:
-                plot_dict[step] = [reward_at_step]
-        #now plot_dict is updated
-        print("plot_dict updated for trail #" + str(trial))
-    print("calculating percentiles")
-    prc_25 = list()
-    prc_50 = list()
-    prc_75 = list()
-    rewards_plot = list()
-    steps_plot = list()
-    current_step = list()
-    current_25 = list()
-    current_50 = list()
-    current_75 = list()
-    steps_plot = list()
-    for step in plot_dict.keys():
-        if len(current_step) < 10: #if current step has less than 10 elements
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))#get the precentiles of values for this step size
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))#append the average value to current step
-            #I think that the dictionary holds the values from all 10 trials
-        else:#if current step has 10 or more entries, then you remove the last values
-            current_step.pop(0)
-            current_25.pop(0)
-            current_50.pop(0)
-            current_75.pop(0)
-            current_25.append(np.percentile(np.array(plot_dict[step]),25))
-            current_50.append(np.percentile(np.array(plot_dict[step]),50))
-            current_75.append(np.percentile(np.array(plot_dict[step]),75))
-            current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
 
-        rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
-        prc_25.append(sum(current_25)/len(current_25))
-        prc_50.append(sum(current_50)/len(current_50))
-        prc_75.append(sum(current_75)/len(current_75))
-        steps_plot.append(step)
-    #now use these functions to plot the results
-    print("now plotting")
-    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards (percentiles) vs. Time Step",'LRM-qrm')
-    plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm')

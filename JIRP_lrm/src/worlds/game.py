@@ -30,6 +30,8 @@ class Game:
         if self.params.game_type == "officeworld_active":
             self.game = OfficeWorldActive(self.params)
 
+    def get_game(self):
+        return self.game
     def is_env_game_over(self):
         return self.game.env_game_over
 
