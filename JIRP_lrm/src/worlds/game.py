@@ -22,7 +22,7 @@ class Game:
     def restart(self,label):
         #print("Label is ",label)
         if self.params.game_type == "craftworld":
-            self.game = CraftWorld(self.params.game_params)
+            self.game = CraftWorld(self.params)
         if self.params.game_type == "trafficworld":
             self.game = TrafficWorld(self.params.game_params)
         if self.params.game_type == "officeworld":

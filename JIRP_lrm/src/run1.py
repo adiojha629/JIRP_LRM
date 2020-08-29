@@ -286,8 +286,10 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
     # setting the test attributes
     if "office" in env:
         task_str = eval(lines[1])[0]
-    else:
+    elif "craft" in env:
         task_str = eval(lines[2])[0]
+    else:
+        print(env + " not supported")
     task = task_str.find(".txt")
     task = task_str[task-2:-4]
     print("\n----------------------")
@@ -298,16 +300,17 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
     run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=num_trails,task = task) #to see specifics look at run_lrm.py
 
 def set_environment(env,lp):
-    if env == "office_world" or env == "officeworld":
-        game_type = "officeworld"
     if "active" in env:
         game_type = "officeworld_active"
-    if "craft" in env:
+    elif "office" in env:
+        game_type = "officeworld"
+    elif "craft" in env:
         game_type ="craftworld"
-        return GridWorldParams(game_type=game_type, file_map=None, movement_noise=0.05)
+        map = "../experiments/craft/maps/map_0.map"
+        use_tabular_representation=True
+        consider_night=False
+        return GridWorldParams(game_type="craftworld", file_map=map, movement_noise=0.05,use_tabular_representation=use_tabular_representation,consider_night=consider_night)
     return GridWorldParams(game_type=game_type, file_map=None, movement_noise=0.05)
-
-
 if __name__ == "__main__":
 
     # EXAMPLE: python3 run.py --algorithm="jirp" --world="craft" --map=0 --num_times=1 --show_plots=1 --is_SAT=1
