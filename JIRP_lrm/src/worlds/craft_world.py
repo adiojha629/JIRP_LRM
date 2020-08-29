@@ -2,6 +2,9 @@ if __name__ == '__main__':
     # This is a terrible hack just to be able to execute this file directly
     import sys
     sys.path.insert(0, '../')
+    in_debug = True
+else:
+    in_debug = False
 
 from worlds.game_objects import *
 import random, math, os
@@ -36,11 +39,13 @@ class CraftWorld(GridWorld):
             self.sunrise = 5
             self.sunset  = 21
         #code added for LRM compatibility:
-        f = open("../../experiments/craft/tests/ground_truth.txt")
+        f = open(params.experiment_file)
         lines = [l.rstrip() for l in f]
         f.close()
         # setting the test attributes
         self.rm_file = eval(lines[2])[0] #get the reward machine that defines the task 8.12.20
+        if in_debug: #look at line 1's if-else structure for details
+            self.rm_file = "../" + self.rm_file
         self.rm = EnvRewardMachine(self.rm_file) #make that reward machine 8.12.20
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.rm.get_initial_state()
@@ -363,9 +368,10 @@ def play(params, task, max_time):
 
 def test_the_env():
     map = "../../experiments/craft/maps/map_0.map"
+    experiment = "../../experiments/craft/tests/ground_truth.txt"
     use_tabular_representation=True
     consider_night=False
-    params = GridWorldParams(game_type="craftworld", file_map=map, movement_noise=0.05,use_tabular_representation=use_tabular_representation,consider_night=consider_night)
+    params = GridWorldParams(game_type="craftworld", file_map=map, movement_noise=0.05,experiment=experiment,use_tabular_representation=use_tabular_representation,consider_night=consider_night)
     game = CraftWorld(params)
     x = game.get_features()
     print(x)
