@@ -4,8 +4,10 @@ class LearningParameters:
         self.prioritized_replay = False
         self.use_perfect_rm = False
 
-    def set_test_parameters(self, test_freq):
+    def set_test_parameters(self, test_freq,test_epi_length):
         self.test_freq  = test_freq
+        self.test_epi_length = test_epi_length
+
 
     def set_rm_learning(self, rm_init_steps, rm_u_max, rm_preprocess, rm_tabu_size, rm_lr_steps, rm_workers):
         self.rm_init_steps = rm_init_steps # number of initial steps to run before learning the RM

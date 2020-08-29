@@ -28,7 +28,7 @@ class OfficeWorld(GridWorld):
     def __init__(self, params):
         super().__init__(params)
         self.env_game_over = False
-        f = open("../../experiments/office/tests/ground_truth.txt")
+        f = open("../../../experiments/office/tests/ground_truth.txt")
         lines = [l.rstrip() for l in f]
         f.close()
         # setting the test attributes
@@ -303,8 +303,12 @@ class OfficeWorldActive(OfficeWorld):
         # NOTE: This is used for debugging purposes and to compute the expected reward of an optimal policy
         #changes depending on the self.rm_file that you use.
         delta_u = {}
-        delta_u[(0, 'a')] = 1
-        delta_u[(1, 'b')] = 2
+        delta_u[(0, 'b')] = 1
+        delta_u[(1, 'a')] = 2
+        delta_u[(2, 'c')] = 3
+        delta_u[(3, 'b')] = 4
+        delta_u[(4, 'c')] = 5
+        delta_u[(5, 'a')] = 6
         return delta_u
 
     def _load_map(self, file_map):

@@ -1,0 +1,70 @@
+U = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+u0 = 0
+terminal_obs: set()
+----------------
+delta_u[(0, 'c')]=1
+delta_u[(0, 'b')]=2
+delta_u[(1, '')]=2
+delta_u[(2, 'a')]=3
+delta_u[(2, 'c')]=4
+delta_u[(3, '')]=5
+delta_u[(4, '')]=7
+delta_u[(5, 'b')]=6
+delta_u[(5, 'c')]=1
+delta_u[(6, 'c')]=7
+delta_u[(7, 'a')]=8
+delta_u[(5, 'a')]=0
+delta_u[(8, 'c')]=1
+delta_u[(7, 'b')]=1
+----------------
+state_p[(0, '')]={'', 'c', 'b', 'a'}
+state_p[(1, '')]={''}
+state_p[(2, '')]={'', 'c', 'b', 'a'}
+state_p[(3, '')]={''}
+state_p[(4, '')]={''}
+state_p[(5, '')]={'', 'c', 'b', 'a'}
+state_p[(6, '')]={'', 'c', 'b'}
+state_p[(7, '')]={'', 'c', 'b', 'a'}
+state_p[(8, '')]={'', 'c', 'b', 'a'}
+state_p[(9, '')]={''}
+state_p[(0, 'a')]={'', 'a'}
+state_p[(1, 'a')]={'', 'a'}
+state_p[(2, 'a')]={'', 'a'}
+state_p[(3, 'a')]={'', 'a'}
+state_p[(4, 'a')]={'', 'a'}
+state_p[(5, 'a')]={'', 'a'}
+state_p[(6, 'a')]={'', 'a'}
+state_p[(7, 'a')]={'', 'a'}
+state_p[(8, 'a')]={'', 'a'}
+state_p[(9, 'a')]={'', 'a'}
+state_p[(0, 'c')]={'', 'c'}
+state_p[(1, 'c')]={'', 'c'}
+state_p[(2, 'c')]={'', 'c'}
+state_p[(3, 'c')]={'', 'c'}
+state_p[(4, 'c')]={'', 'c'}
+state_p[(5, 'c')]={'', 'c'}
+state_p[(6, 'c')]={'', 'c'}
+state_p[(7, 'c')]={'', 'c'}
+state_p[(8, 'c')]={'', 'c'}
+state_p[(9, 'c')]={'', 'c'}
+state_p[(0, 'b')]={'', 'b'}
+state_p[(1, 'b')]={'', 'b'}
+state_p[(2, 'b')]={'', 'b'}
+state_p[(3, 'b')]={'', 'b'}
+state_p[(4, 'b')]={'', 'b'}
+state_p[(5, 'b')]={'', 'b'}
+state_p[(6, 'b')]={'', 'b'}
+state_p[(7, 'b')]={'', 'b'}
+state_p[(8, 'b')]={'', 'b'}
+state_p[(9, 'b')]={'', 'b'}
+----------------
+state_r[0]
+state_r[1]
+state_r[2]
+state_r[3]
+state_r[4]
+state_r[5]
+state_r[6]
+state_r[7]
+state_r[8]
+state_r[9]

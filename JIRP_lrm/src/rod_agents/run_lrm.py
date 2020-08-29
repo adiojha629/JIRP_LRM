@@ -41,8 +41,8 @@ def run_lrm(env_params, lp, rl):
     step = 0
 
     #parameters for testing agent throughout training: 8/7/20
-    test_frq = 200 #how often we test agent 8/7/20
-    test_epi_length = 200 #how long we test agent 8/7/20
+    test_frq = lp.test_freq #how often we test agent 8/7/20
+    test_epi_length = lp.test_epi_length #how long we test agent 8/7/20
     #plot_dict = dict() #used for plotting rewards over time from tests 8/7/20
     test_step = 0 #used by plot_dict (variable above) 8/7/20
     test_env = Game(env_params,label="test") #environment used for testing 8/7/2020
@@ -201,7 +201,7 @@ def run_lrm(env_params, lp, rl):
     # return the trainig rewards
     return train_rewards, rm_scores, rm.get_info(),reward_list
 
-def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
+def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails,task):
     time_init = time.time()
     #random.seed(n_seed)
     for trail in trails:
@@ -209,8 +209,9 @@ def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails):
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
             # Saving the results
-            out_folder = "LRM/" + rl + "/task_abaca/trail_"+str(trail)
+            out_folder = "LRM/" + rl + "/task_"+task+"/trail_"+str(trail)
             save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
+            print("Results saved to ",out_folder)
 
     # Showing results
     print("Time:", "%0.2f"%((time.time() - time_init)/60), "mins\n")

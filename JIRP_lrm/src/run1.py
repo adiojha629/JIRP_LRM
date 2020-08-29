@@ -10,6 +10,7 @@ from tester_policybank.tester import TesterPolicyBank
 from tester.tester_params import TestingParameters
 from common.curriculum import CurriculumLearner
 from rod_agents.learning_parameters import LearningParameters
+#from rod_agents.run_lrm import run_lrm_experiments
 from run_lrm import run_lrm_experiments
 from worlds.game import GameParams
 from worlds.grid_world import GridWorldParams
@@ -234,12 +235,22 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
 
     if alg_name == "lrm-qrm":
         rl = 'lrm-qrm'
-        env = "officeworld_active" if "active" in world else "office_world"
-        n_seed = 0
-        n_workers = 16
-        run_lrm_agent(rl,env,n_seed,n_workers,num_trials)
+    else:
+        print(alg_name + " is not supported at this time")
+    #determine environment:
+    if "active" in world:
+        env = "officeworld_active"
+    elif "craft" in world:
+        env = "craftworld"
+    elif "office" in world:
+        env = "office_world"
+    else:
+        print(world + " is not supportted at this time")
+    n_seed = 0
+    n_workers = 16
+    run_lrm_agent(rl,env,n_seed,n_workers,num_trials,experiment_known)
 #lp and learning parameters variables point to the same Learning Parameters class
-def run_lrm_agent(rl, env, n_seed, n_workers,num_trails):
+def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
 
     save = True #indicates that we are saving data
     print("Running", rl, "in", env, "using seed", n_seed)
@@ -252,31 +263,48 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails):
     lp.set_rm_learning(rm_init_steps=200e3, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
     #below we set the train_steps to 2e6
-    lp.set_rl_parameters(gamma=0.9, train_steps=int(1e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(1e6))
+    lp.set_rl_parameters(gamma=0.9, train_steps=int(2e6), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(2e6))
 
     #below we determine how often we print results. Right now we print results every 1e4 time steps
-    lp.set_test_parameters(test_freq = int(1e4))
+    lp.set_test_parameters(test_freq = int(400),test_epi_length=400)
 
     #below we set learning rate, batch_size and other hyper parameters
     lp.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,
                     buffer_size = 100000, batch_size = 32, use_double_dqn = True, num_hidden_layers = 5, num_neurons = 64)
 
     # Setting the environment
-    env_params = set_environment(env, lp)
+    env_params = set_environment(env, lp,experiment)
 
     # Choosing the RL algorithm
     print("\n----------------------")
     print("LRM agent:", rl)
     print("----------------------\n")
+    #get task information:
+    f = open(experiment)
+    lines = [l.rstrip() for l in f]
+    f.close()
+    # setting the test attributes
+    if "office" in env:
+        task_str = eval(lines[1])[0]
+    else:
+        task_str = eval(lines[2])[0]
+    task = task_str.find(".txt")
+    task = task_str[task-2:-4]
+    print("\n----------------------")
+    print("Task is :", task)
+    print("----------------------\n")
 
     # Running the experiment
-    run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=num_trails) #to see specifics look at run_lrm.py
+    run_lrm_experiments(env_params, lp, rl, n_seed, save,trails=num_trails,task = task) #to see specifics look at run_lrm.py
 
 def set_environment(env,lp):
     if env == "office_world" or env == "officeworld":
         game_type = "officeworld"
     if "active" in env:
         game_type = "officeworld_active"
+    if "craft" in env:
+        game_type ="craftworld"
+        return GridWorldParams(game_type=game_type, file_map=None, movement_noise=0.05)
     return GridWorldParams(game_type=game_type, file_map=None, movement_noise=0.05)
 
 
@@ -307,7 +335,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbosity", help="increase output verbosity")
     parser.add_argument("--show_plots", default=0, help="1 for showing plots throughout the algorithm run, 0 otherwise")
     parser.add_argument("--is_SAT", default=0, help="1 for SAT, 0 for RPNI")
- 
+    #parser.add_argument("--trails", default=[1,2,3], help="List of what trails you want to run for LRM")
 
     args = parser.parse_args()
     """The code below raises errors if an incorrect argument is given"""
@@ -326,7 +354,7 @@ if __name__ == "__main__":
     show_plots = (int(args.show_plots) == 1)
     is_SAT = (int(args.is_SAT) == 1)
     """The following if statements set variables that do not matter for running LRM (these variables are not passed into the LRM algorithm)"""
-    if world == "office":
+    if world == "office" or "office" in world:
         experiment_l = "../experiments/office/tests/hypothesis_machines.txt"
         experiment_t = "../experiments/office/tests/ground_truth.txt"
         if alg_name == "hrl":
@@ -347,6 +375,6 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = ['debug']
+    num_trials = ["debug"]
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)

@@ -89,13 +89,15 @@ def plot_this(a1,a2,title,algo):
 import matplotlib.pyplot as plt
 import matplotlib
 if __name__ == "__main__":
-    debug = "results to plot_dict"
+    debug = "debug_get_files"
     if(debug == "results to plot_dict"):
+        task = input("What task (ie t9 t7) is this for?")
+        world = input("What world (office craft etc) ?")
         plot_dict ={}
         #for loop here
         print("Putting Data into Plot_dict")
         for trial in range(10):
-            file_name = "../results/LRM/lrm-qrm/task_abac/trail_"+str(trial+1)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
+            file_name = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(trial)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
             file = open(file_name)
             lines = file.readlines()
             file.close()
@@ -152,10 +154,10 @@ if __name__ == "__main__":
             steps_plot.append(step)
         #now use these functions to plot the results
         print("now plotting")
-        plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM-qrm abac task')
-        plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm abac task')
+        plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM-qrm bacbac task')
+        plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm bacbac task')
         print("saving prcs")
-        folder = '../results/LRM/lrm-qrm/task_abac'
+        folder = '../results/LRM/lrm-qrm/'+world+'task_'+task
         if not os.path.exists(folder): os.makedirs(folder)
         for text,value in zip(["prc25","prc50","prc75"],[prc_25,prc_50,prc_75]):
             path_file = folder + "/"+text+".txt"
@@ -171,11 +173,11 @@ if __name__ == "__main__":
         print("Saving CSV files for reward plot and average rewards")
         filename = folder+"/plot_data/"
         if not os.path.exists(filename): os.makedirs(filename)
-        filename = folder+"/plot_data/values.csv"
+        filename = folder+"/plot_data/LRM_"+world+"_"+task+".csv"
         with open(filename, 'w') as f:#copied from Active-15. 8.9.2020
             wr = csv.writer(f)
             wr.writerows(list(plot_dict.values()))
-        filename = folder+"/plot_data/avgreward.txt"
+        filename = folder+"/plot_data/LRM_avgreward"+task+".txt"
         with open(filename, 'w') as f:
             f.write("%s\n" % str(sum(rewards_plot) / len(rewards_plot)))
             for item in rewards_plot:
@@ -183,8 +185,10 @@ if __name__ == "__main__":
         print("You can find csv files at:\n"+folder+"/plot_data/")
     elif debug == "debug_get_files":
         #use this code to debug how you get data from the files and format it into a plot dict
+        task = input("What task (ie t9 t7) is this for?")
+        world = input("What world (office craft etc) ?")
         print("Debugging file data extraction")
-        file1 = "../results/LRM/lrm-qrm/task_abac/trail_"+str(3)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
+        file1 = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(3)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
         file = open(file1)
         lines = file.readlines()
         file.close()

@@ -23,6 +23,7 @@ class CraftWorldParams:
 class CraftWorld(GridWorld):
 
     def __init__(self, params):
+        print("This is Minecraft World")
         super().__init__(params)
         self.params = params
         self._load_map(params.file_map)
