@@ -4,6 +4,9 @@ if __name__ == '__main__':
     # This is a terrible hack just to be able to execute this file directly
     import sys
     sys.path.insert(0, '../')
+    is_debug = True
+else:
+    is_debug = False
 
 from worlds.game_objects import Actions
 from worlds.game_objects import *
@@ -28,11 +31,13 @@ class OfficeWorld(GridWorld):
     def __init__(self, params):
         super().__init__(params)
         self.env_game_over = False
-        f = open("../../../experiments/office/tests/ground_truth.txt")
+        f = open(params.experiment_file)
         lines = [l.rstrip() for l in f]
         f.close()
         # setting the test attributes
         self.rm_file = eval(lines[1])[0]
+        if is_debug: # if we run from officeworld.py we need one more "../"
+            self.rm_file = "../" + self.rm_file
         self.rm = EnvRewardMachine(self.rm_file)
         self.current_state = self.get_state()  # get the initial reward machine and MDP state
         self.u1 = self.rm.get_initial_state()
@@ -468,7 +473,8 @@ def play():
 
 # this method is for debugging. If you create a new method and want to see what it returns, add code here, then click run
 def test_the_env():
-    params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05)
+    experiment = "../../experiments/office/tests/ground_truth.txt"
+    params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05,experiment=experiment)
     game = OfficeWorldActive(params)
     #x = game.get_features()
     #print(x)
