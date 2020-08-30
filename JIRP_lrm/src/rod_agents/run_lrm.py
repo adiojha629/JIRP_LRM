@@ -209,7 +209,7 @@ def run_lrm_experiments(env_params, lp, rl, n_seed, save,trails,task):
         rewards, scores, rm_info,reward_list = run_lrm(env_params, lp, rl)
         if save:
             # Saving the results
-            out_folder = "LRM/" + rl + "/task_"+task+"/trail_"+str(trail)
+            out_folder = "LRM/" + rl + "/"+env_params.game_type+"/task_"+task+"/trail_"+str(trail)
             save_results(rewards, scores, rm_info, out_folder, 'lrm', rl, n_seed,reward_list)
             print("Results saved to ",out_folder)
 
