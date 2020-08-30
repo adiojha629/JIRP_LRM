@@ -111,7 +111,7 @@ def run_lrm(env_params, lp, rl):
             # reinitializing the policy if the rm changed
             if policy is None:
                 print("Learning a policy for the current RM...")
-                if rl == "dqn":
+                if rl == "dqn" or rl == "lrm-dqn":
                     policy = DQN(lp, len(o1_features), len(actions), rm)
                 elif rl == "qrm" or rl == "lrm-qrm":
                     policy = QRM(lp, len(o1_features), len(actions), rm)

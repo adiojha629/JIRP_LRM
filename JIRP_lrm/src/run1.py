@@ -233,8 +233,8 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
         run_qlearning_experiments(alg_name, tester, tester_l, curriculum, num_times, show_print, show_plots)
     '''
 
-    if alg_name == "lrm-qrm":
-        rl = 'lrm-qrm'
+    if alg_name == "lrm-qrm" or alg_name == "lrm-dqn":
+        rl = alg_name
     else:
         print(alg_name + " is not supported at this time")
     #determine environment:
@@ -325,7 +325,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
     """Change the below line's default to change the type of algorithm"""
-    parser.add_argument('--algorithm', default='lrm-qrm', type=str,
+    parser.add_argument('--algorithm', default='lrm-dqn', type=str,
                         help='This parameter indicated which RL algorithm to use. The options are: ' + str(algorithms))
     """Change the below line's default to change the world (only office world works with LRM at this time) """
     parser.add_argument('--world', default='craft', type=str,

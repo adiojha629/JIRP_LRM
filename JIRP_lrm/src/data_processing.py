@@ -89,15 +89,15 @@ def plot_this(a1,a2,title,algo):
 import matplotlib.pyplot as plt
 import matplotlib
 if __name__ == "__main__":
-    debug = "debug_get_files"
+    debug = "results to plot_dict"
     if(debug == "results to plot_dict"):
         task = input("What task (ie t9 t7) is this for?")
-        world = input("What world (office craft etc) ?")
+        world = input("What world (office craftworld etc) ?")
         plot_dict ={}
         #for loop here
         print("Putting Data into Plot_dict")
         for trial in range(10):
-            file_name = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(trial)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
+            file_name = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(trial+1)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
             file = open(file_name)
             lines = file.readlines()
             file.close()
@@ -154,10 +154,11 @@ if __name__ == "__main__":
             steps_plot.append(step)
         #now use these functions to plot the results
         print("now plotting")
-        plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM-qrm bacbac task')
-        plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm bacbac task')
+        task_label = "bacbac" if task == "t9" else "abac"
+        plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM-qrm '+task_label+' task')
+        plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm '+task_label+' task')
         print("saving prcs")
-        folder = '../results/LRM/lrm-qrm/'+world+'task_'+task
+        folder = '../results/LRM/lrm-qrm/'+world+'/task_'+task
         if not os.path.exists(folder): os.makedirs(folder)
         for text,value in zip(["prc25","prc50","prc75"],[prc_25,prc_50,prc_75]):
             path_file = folder + "/"+text+".txt"
@@ -186,7 +187,7 @@ if __name__ == "__main__":
     elif debug == "debug_get_files":
         #use this code to debug how you get data from the files and format it into a plot dict
         task = input("What task (ie t9 t7) is this for?")
-        world = input("What world (office craft etc) ?")
+        world = input("What world (office craftworld etc) ?")
         print("Debugging file data extraction")
         file1 = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(3)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
         file = open(file1)
