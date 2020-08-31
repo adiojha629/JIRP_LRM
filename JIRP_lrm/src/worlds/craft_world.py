@@ -319,7 +319,7 @@ class CraftWorld(GridWorld):
         Since craft world has only one room (the entire board) this is pretty simple
         """
         self.rooms = [[(0,0),(self.map_height-1, self.map_width-1)]]  # initialize rooms to be empty; the for loop fills it up
-        self.map_locations = []  # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations again needed for grid world 8.12.2020
+        self.map_locations = []  # list of tuples (room_id, loc_i, loc_j) with all the non-obstacle locations; again needed for grid world 8.12.2020
         for i in range(len(self.map)):
             for j in range(len(self.map[i])):
                 if str(self.map[i][j]) != "X":
@@ -405,12 +405,6 @@ def test_the_env():
             print("Invalid action")
         # Show game map, states and rewards
         game.show_map()
-        """
-      print(nxt_state)
-      print(str(type(nxt_state)))
-      print(reward)
-      print(str(type(reward)))
-      """
         print("State of reward machine is " + str(game.u1))
         print("State of MDP is " + str(game.current_state))
         print("Reward at THIS STATE is " + str(reward))
@@ -421,6 +415,7 @@ def test_the_env():
         print("game.get_features() returns") #the nxt_state is the output of step. It is the state that the agent currently is in
         print(game._get_map_features())
         print(game._get_event_features())
+        print(game.map_locations)
 
 
 # This code allow to play a game (for debugging purposes)

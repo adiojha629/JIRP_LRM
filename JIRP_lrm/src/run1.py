@@ -260,13 +260,13 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
     # Setting the learning parameters
     lp = LearningParameters()
     #below we allow the agent to explore the environment for 2e5 steps before we start training
-    lp.set_rm_learning(rm_init_steps=8e4, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
+    lp.set_rm_learning(rm_init_steps=12e4, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
     #below we set the train_steps to 2e6
-    lp.set_rl_parameters(gamma=0.9, train_steps=int(4e5), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(4e5))
+    lp.set_rl_parameters(gamma=0.9, train_steps=int(6e5), episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=int(6e5))
 
     #below we determine how often we print results. Right now we print results every 1e4 time steps
-    lp.set_test_parameters(test_freq = int(400),test_epi_length=400)
+    lp.set_test_parameters(test_freq = int(600),test_epi_length=600)
 
     #below we set learning rate, batch_size and other hyper parameters
     lp.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,
@@ -325,7 +325,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
     """Change the below line's default to change the type of algorithm"""
-    parser.add_argument('--algorithm', default='lrm-dqn', type=str,
+    parser.add_argument('--algorithm', default='lrm-qrm', type=str,
                         help='This parameter indicated which RL algorithm to use. The options are: ' + str(algorithms))
     """Change the below line's default to change the world (only office world works with LRM at this time) """
     parser.add_argument('--world', default='craft', type=str,
@@ -378,6 +378,6 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = ["debug"]
+    num_trials = [2,3,4,5]
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)

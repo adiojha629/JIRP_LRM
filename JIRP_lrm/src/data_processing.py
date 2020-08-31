@@ -189,11 +189,8 @@ if __name__ == "__main__":
         task = input("What task (ie t9 t7) is this for?")
         world = input("What world (office craftworld etc) ?")
         algo = input("What algo (qrm or dqn)")
-        task = "t7"
-        world = "craftworld"
-        algo = "qrm"
         print("Debugging file data extraction")
-        file1 = "../results/LRM/lrm-"+algo+"/"+world+"/task_"+task+"/trail_"+str(1)+"/lrm-lrm-"+algo+"-0_rewards_over_time.txt"
+        file1 = "../results/LRM/lrm-"+algo+"/"+world+"/task_"+task+"/trail_"+str("debug")+"/lrm-lrm-"+algo+"-0_rewards_over_time.txt"
         file = open(file1)
         lines = file.readlines()
         file.close()
@@ -209,9 +206,9 @@ if __name__ == "__main__":
         print(reward_list[0:10])
         print(reward_list[200:]) #only rewards after random action for craftworld abac larm-dqn 8.30
         counter = 0
-        for t in reward_list[200:]:
+        for t in reward_list[300:]:
             counter += t[1]
-        print(counter)
+        print("rewards after random action",counter)
     elif debug == 3:
         folder = '../results/jul_30_LRM_3symoffice_debug'
         print("Getting prc's from folders")
