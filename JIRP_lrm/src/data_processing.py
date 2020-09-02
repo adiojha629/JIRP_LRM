@@ -89,7 +89,7 @@ def plot_this(a1,a2,title,algo):
 import matplotlib.pyplot as plt
 import matplotlib
 if __name__ == "__main__":
-    debug = "debug_get_files"
+    debug = "results to plot_dict"
     if(debug == "results to plot_dict"):
         task = input("What task (ie t9 t7) is this for?")
         world = input("What world (office craftworld etc) ?")

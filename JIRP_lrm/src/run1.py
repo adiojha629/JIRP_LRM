@@ -378,7 +378,7 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = [5,6,7,8]
+    num_trials = [9,10]
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)
   
