@@ -1,5 +1,6 @@
 from worlds.game import GameParams
 from worlds.office_world import OfficeWorldParams
+from worlds.grid_world import GridWorldParams
 
 class TesterOfficeWorld:
     def __init__(self, experiment, gamma, data = None):
@@ -37,7 +38,8 @@ class TesterOfficeWorld:
         return self.tasks
 
     def get_task_params(self, task_specification):
-        return GameParams("officeworld", OfficeWorldParams())
+        return GridWorldParams(game_type="officeworld_active", file_map=None, movement_noise=0.05,experiment=self.experiment)
+        #return GameParams("officeworld", OfficeWorldParams()) Old JIRP implementation: pre_lrm integration 9.5.20
 
     def get_task_rm_file(self, task_specification):
         return task_specification

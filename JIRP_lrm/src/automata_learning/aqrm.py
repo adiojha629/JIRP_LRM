@@ -31,7 +31,7 @@ def run_aqrm_task(epsilon, env, learned_rm_file, tester_true, tester_learned, cu
     rm_true = tester_true.get_reward_machines()[0] # add one more input n to track tasks at hand, replace 0 with n
     rm_learned = tester_learned.get_hypothesis_machine()
 
-    task = Game(task_params)
+    task = Game(task_params,label="")
     actions = task.get_actions()
     num_features = len(task.get_features())
     num_steps = learning_params.max_timesteps_per_task
@@ -85,7 +85,7 @@ def run_aqrm_task(epsilon, env, learned_rm_file, tester_true, tester_learned, cu
 
         u2 = rm_learned.get_next_state(u1, events)
         u2_true = rm_true.get_next_state(u1_true,events)
-        reward = rm_true.get_reward(u1_true,u2_true,s1,a,s2)
+        reward = rm_true.get_reward(u1_true,u2_true,s1,a,s2)## Reward machine class created differently under rodrigo....
 
         q[s][u1][a] = (1 - alpha) * q[s][u1][a] + alpha * (reward + gamma * np.amax(q[s_new][u2]))
 
@@ -259,7 +259,7 @@ def _remove_files_from_folder(relative_path):
 
 def run_aqrm_experiments(alg_name, tester, tester_learned, curriculum, num_times, show_print, show_plots, is_SAT):
 
-    time_start = time.clock()
+    time_start = time.time()
 
     learning_params = tester_learned.learning_params
     testing_params = tester_learned.testing_params
@@ -292,7 +292,7 @@ def run_aqrm_experiments(alg_name, tester, tester_learned, curriculum, num_times
         shutil.copy(hm_file,'./automata_learning_utils/data/rm.txt') #######
 
         # Creating policy bank
-        task_aux = Game(tester.get_task_params(curriculum.get_current_task()))
+        task_aux = Game(tester.get_task_params(curriculum.get_current_task()),label = "")
         num_features = len(task_aux.get_features())
         num_actions  = len(task_aux.get_actions())
         q = np.zeros([1681,15,4])

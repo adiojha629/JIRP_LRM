@@ -17,7 +17,7 @@ class RewardMachine:
         # <U,u0,delta_u,state_r,state_t,state_p>
         self.u0 = 0          # initial state
         self.U = None        # list of machine states
-        self.delta_u = None  # state-transition function
+        self.delta_u = {}  # state-transition function
         self.state_p = {}    # set of predictions given the RM state and observation
         self.state_r = []    # estimated reward given the RM state and observation
         self.traces  = []    # list of traces that we expect this RM to fit

@@ -17,7 +17,7 @@ class Game:
 #note that not all methods are defined in officeworld; some methods may not be needed. they are included here for the sake of being consistant with rodrigo's code
     def __init__(self, params,label):
         self.params = params
-        self.restart(label)
+        self.restart(label) #label used for debugging which environment is used for testing and training in LRM 9.5.2020
 
     def restart(self,label):
         #print("Label is ",label)
@@ -34,7 +34,8 @@ class Game:
         return self.game
     def is_env_game_over(self):
         return self.game.env_game_over
-
+    def get_true_propositions(self):
+        return self.game.get_events()
     def execute_action(self, action):
         """
         We execute 'action' in the game
