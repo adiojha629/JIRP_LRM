@@ -123,7 +123,7 @@ def run_aqrm_task(epsilon, env, learned_rm_file, tester_true, tester_learned, cu
         if is_rm_learned==0:
             if task.is_env_game_over() or rm_true.is_terminal_state(u2_true):
                 # Restarting the game
-                task = Game(task_params)
+                task = Game(task_params,label = "test")
                 if curriculum.stop_task(t):
                     break
                 s2, s2_features = task.get_state_and_features()
@@ -133,7 +133,7 @@ def run_aqrm_task(epsilon, env, learned_rm_file, tester_true, tester_learned, cu
         else:
             if task.is_env_game_over() or rm_true.is_terminal_state(u2_true):
                 # Restarting the game
-                task = Game(task_params)
+                task = Game(task_params,label = "test")
 
                 if curriculum.stop_task(t):
                     break
@@ -177,7 +177,7 @@ def run_aqrm_task(epsilon, env, learned_rm_file, tester_true, tester_learned, cu
 
 def run_aqrm_test(reward_machines, task_params, rm, rm_true, is_learned, q, learning_params, testing_params, optimal, num_features):
     # Initializing parameters
-    task = Game(task_params)
+    task = Game(task_params,label = "test")
     s1, s1_features = task.get_state_and_features()
 
     u1 = rm.get_initial_state()
@@ -344,7 +344,7 @@ def run_aqrm_experiments(alg_name, tester, tester_learned, curriculum, num_times
             elif update_rm:
                 rm_file_learned = hm_file_update
 
-                task_aux = Game(tester.get_task_params(curriculum.get_current_task()))
+                task_aux = Game(tester.get_task_params(curriculum.get_current_task()),label = "")
                 num_features = len(task_aux.get_features())
                 num_actions = len(task_aux.get_actions())
                 rm_learned = tester_learned.get_hypothesis_machine() # used to be rm_learned = tester_learned.get_reward_machines()[0]

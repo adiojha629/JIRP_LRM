@@ -2,6 +2,8 @@ from tester.tester_craft import TesterCraftWorld
 from tester.tester_office import TesterOfficeWorld
 from tester.tester_traffic import TesterTrafficWorld
 from reward_machines.reward_machine import RewardMachine
+from reward_machines.env_reward_machine import EnvRewardMachine #a version of Reward machines compatibile with JIRP, but not LRM
+
 from tester.test_utils import read_json, get_precentiles_str, get_precentiles_in_seconds, reward2steps
 import numpy as np
 import time, os
@@ -9,7 +11,7 @@ import matplotlib.pyplot as plt
 #import pdb
 
 class Tester:
-    def __init__(self, learning_params, testing_params, experiment, result_file=None):
+    def __init__(self, learning_params, testing_params, experiment, result_file=None,):
         if result_file is None: # in this case, we are running a new experiment
             self.learning_params = learning_params
             self.testing_params = testing_params
@@ -40,7 +42,6 @@ class Tester:
             #self.hypothesis_machine = RewardMachine( self.hypothesis_machine_file ) # old JIRP version
             self.hypothesis_machine = RewardMachine(self.learning_params.rm_u_max, self.learning_params.rm_preprocess, self.learning_params.rm_tabu_size, self.learning_params.rm_workers, self.learning_params.rm_lr_steps, self.world.get_perfect_rm(), self.learning_params.use_perfect_rm)
 
-
             # I store the results here
             self.results = {}
             self.steps = []
@@ -69,7 +70,6 @@ class Tester:
 
     def update_hypothesis_machine(self):
         self.hypothesis_machine = RewardMachine(self.learning_params.rm_u_max, self.learning_params.rm_preprocess, self.learning_params.rm_tabu_size, self.learning_params.rm_workers, self.learning_params.rm_lr_steps, self.world.get_perfect_rm(), self.learning_params.use_perfect_rm)
-
     def update_hypothesis_machine_file(self,hmfile):
         self.hypothesis_machine_file = hmfile
 

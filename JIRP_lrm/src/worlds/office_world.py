@@ -475,7 +475,7 @@ def play():
 def test_the_env():
     experiment = "../../experiments/office/tests/ground_truth.txt"
     params = GridWorldParams(game_type="officeworld", file_map=None, movement_noise=0.05,experiment=experiment)
-    game = OfficeWorldActive(params)
+    game = OfficeWorld(params)
     #x = game.get_features()
     #print(x)
     #print("Length of get features is " + str(len(x)))

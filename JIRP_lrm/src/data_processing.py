@@ -92,7 +92,7 @@ if __name__ == "__main__":
     debug = "results to plot_dict"
     if(debug == "results to plot_dict"):
         task = input("What task (ie t9 t7) is this for?")
-        world = input("What world (office craftworld etc) ?")
+        world = input("What world (office,officeworld_active craftworld etc) ?")
         plot_dict ={}
         #for loop here
         print("Putting Data into Plot_dict")
@@ -157,33 +157,37 @@ if __name__ == "__main__":
         task_label = "bacbac" if task == "t9" else "abac"
         plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM-qrm '+task_label+' task')
         plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm LRM-qrm '+task_label+' task')
-        print("saving prcs")
-        folder = '../results/LRM/lrm-qrm/'+world+'/task_'+task
-        if not os.path.exists(folder): os.makedirs(folder)
-        for text,value in zip(["prc25","prc50","prc75"],[prc_25,prc_50,prc_75]):
-            path_file = folder + "/"+text+".txt"
-            if not os.path.exists(path_file):
-                f = open(path_file, 'wb')
-                pickle.dump(value,f)
-                f.close()
-                print("\n"+text+" uploaded")
-            else:
-                print(path_file+' already exists')
-        print("Done saving\nCheck out files at this location:\n"+folder)
+        answer = input("Save results? (y/n)")
+        if(answer == 'y'):
+            print("saving prcs")
+            folder = '../results/LRM/lrm-qrm/'+world+'/task_'+task
+            if not os.path.exists(folder): os.makedirs(folder)
+            for text,value in zip(["prc25","prc50","prc75"],[prc_25,prc_50,prc_75]):
+                path_file = folder + "/"+text+".txt"
+                if not os.path.exists(path_file):
+                    f = open(path_file, 'wb')
+                    pickle.dump(value,f)
+                    f.close()
+                    print("\n"+text+" uploaded")
+                else:
+                    print(path_file+' already exists')
+            print("Done saving\nCheck out files at this location:\n"+folder)
 
-        print("Saving CSV files for reward plot and average rewards")
-        filename = folder+"/plot_data/"
-        if not os.path.exists(filename): os.makedirs(filename)
-        filename = folder+"/plot_data/LRM_"+world+"_"+task+".csv"
-        with open(filename, 'w') as f:#copied from Active-15. 8.9.2020
-            wr = csv.writer(f)
-            wr.writerows(list(plot_dict.values()))
-        filename = folder+"/plot_data/LRM_avgreward"+task+".txt"
-        with open(filename, 'w') as f:
-            f.write("%s\n" % str(sum(rewards_plot) / len(rewards_plot)))
-            for item in rewards_plot:
-                f.write("%s\n" % item)
-        print("You can find csv files at:\n"+folder+"/plot_data/")
+            print("Saving CSV files for reward plot and average rewards")
+            filename = folder+"/plot_data/"
+            if not os.path.exists(filename): os.makedirs(filename)
+            filename = folder+"/plot_data/LRM_"+world+"_"+task+".csv"
+            with open(filename, 'w') as f:#copied from Active-15. 8.9.2020
+                wr = csv.writer(f)
+                wr.writerows(list(plot_dict.values()))
+            filename = folder+"/plot_data/LRM_avgreward"+task+".txt"
+            with open(filename, 'w') as f:
+                f.write("%s\n" % str(sum(rewards_plot) / len(rewards_plot)))
+                for item in rewards_plot:
+                    f.write("%s\n" % item)
+            print("You can find csv files at:\n"+folder+"/plot_data/")
+        else:
+            print("Goodbye!")
     elif debug == "debug_get_files":
         #use this code to debug how you get data from the files and format it into a plot dict
         task = input("What task (ie t9 t7) is this for?")
@@ -263,6 +267,66 @@ if __name__ == "__main__":
             if not(value in value_history):
                 value_history.append(value)
         print(value_history)'''
+    elif debug == "rescale_graphs":
+        print("Rescaling Graphs")
+        #get plot dict data
+        file = "../results/DDQN/craftworld9ddqn.csv"
+        plot_dict = {}
+        test_freq = 600
+        counter = 0
+        with open(file) as csv_file:
+            reader = csv.reader(csv_file)
+            for step in reader:
+                values = [float(value) for value in step]
+                counter+=test_freq
+                plot_dict[counter] = values
+        #plot all of it
+        #calculate the percentiles
+        if(True):
+            print("calculating percentiles")
+            prc_25 = list()
+            prc_50 = list()
+            prc_75 = list()
+            rewards_plot = list()
+            steps_plot = list()
+            current_step = list()
+            current_25 = list()
+            current_50 = list()
+            current_75 = list()
+            steps_plot = list()
+            for step in plot_dict.keys():
+                if len(current_step) < 10: #if current step has less than 10 elements
+                    current_25.append(np.percentile(np.array(plot_dict[step]),25))#get the precentiles of values for this step size
+                    current_50.append(np.percentile(np.array(plot_dict[step]),50))
+                    current_75.append(np.percentile(np.array(plot_dict[step]),75))
+                    current_step.append(sum(plot_dict[step])/len(plot_dict[step]))#append the average value to current step
+                    #I think that the dictionary holds the values from all 10 trials
+                else:#if current step has 10 or more entries, then you remove the last values
+                    current_step.pop(0)
+                    current_25.pop(0)
+                    current_50.pop(0)
+                    current_75.pop(0)
+                    current_25.append(np.percentile(np.array(plot_dict[step]),25))
+                    current_50.append(np.percentile(np.array(plot_dict[step]),50))
+                    current_75.append(np.percentile(np.array(plot_dict[step]),75))
+                    current_step.append(sum(plot_dict[step])/len(plot_dict[step]))
+
+                rewards_plot.append(sum(plot_dict[step])/len(plot_dict[step]))
+                prc_25.append(sum(current_25)/len(current_25))
+                prc_50.append(sum(current_50)/len(current_50))
+                prc_75.append(sum(current_75)/len(current_75))
+                steps_plot.append(step)
+        print("now plotting")
+        task_label = "bcabca"
+        plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'DDQN '+task_label+' task')
+        plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'LRM-qrm DDQN '+task_label+' task')
+        #loop
+        while(True):
+            #ask for max x limit
+            x_limit = int(int(float(eval(input("What is X max limit?"))))/ test_freq)
+            #graph it
+            plot_performance(steps_plot[0:x_limit],prc_25[0:x_limit],prc_50[0:x_limit],prc_75[0:x_limit],"Rewards vs. Time Step",'DDQN '+task_label+' task')
+            #repeat
     else:
         test_freq = 1000
         testing_step = 0

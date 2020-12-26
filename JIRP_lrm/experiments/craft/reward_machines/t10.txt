@@ -10,4 +10,5 @@
 (4,4,'!c',ConstantRewardFunction(0))
 (4,5,'c',ConstantRewardFunction(0))
 (5,5,'!a',ConstantRewardFunction(0))
+(5,6,'a',ConstantRewardFunction(1))
 (6,6,'True',ConstantRewardFunction(0))

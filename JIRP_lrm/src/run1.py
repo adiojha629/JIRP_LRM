@@ -9,12 +9,13 @@ from testerHRL.tester import TesterHRL
 from tester_policybank.tester import TesterPolicyBank
 from tester.tester_params import TestingParameters
 from common.curriculum import CurriculumLearner
-from rod_agents.learning_parameters import LearningParameters
+from rod_agents.learning_parameters import LearningParameters as Rod_LearningParameters
+from qrm.learning_params import LearningParameters
 #from rod_agents.run_lrm import run_lrm_experiments
 from run_lrm import run_lrm_experiments
 from worlds.game import GameParams
 from worlds.grid_world import GridWorldParams
-def get_params_craft_world(experiment):
+def get_params_craft_world(experiment,experiment_known):
     step_unit = 400
 
     # configuration of testing params
@@ -48,7 +49,7 @@ def get_params_craft_world(experiment):
     learning_params.num_neurons = 64
 
     # Setting the experiment
-    tester = Tester(learning_params, testing_params, experiment)
+    tester = Tester(learning_params, testing_params, experiment,rod = False)
 
     # Setting the curriculum learner
     curriculum = CurriculumLearner(tester.get_task_rms())
@@ -56,7 +57,7 @@ def get_params_craft_world(experiment):
     curriculum.total_steps = 1500 * step_unit
     curriculum.min_steps = 1
 
-    print("Water World ----------")
+    print("Craft World ----------")
     print("lr:", learning_params.lr)
     print("batch_size:", learning_params.batch_size)
     print("num_hidden_layers:", learning_params.num_hidden_layers)
@@ -114,7 +115,7 @@ def get_params_traffic_world(experiment):
     learning_params.num_neurons = 64
 
     # Setting the experiment
-    tester = Tester(learning_params, testing_params, experiment)
+    tester = Tester(learning_params, testing_params, experiment,rod = False)
 
 
     # Setting the curriculum learner
@@ -133,13 +134,17 @@ def get_params_traffic_world(experiment):
 
     return testing_params, learning_params, tester, curriculum
 
-def get_params_office_world(experiment):
-    f = open(experiment)
+
+#NOTE: experiment_known allows the code to automatically set the learning parameters used in the AFRAI-RL paper
+def get_params_office_world(experiment,experiment_known):
+    adi = input("Reached get_params_office_world")
+    f = open(experiment_known)
     lines = [l.rstrip() for l in f]
     f.close()
     task_str = eval(lines[1])[0]
     task = task_str.find(".txt")
     task = task_str[task-2:-4] #get task number
+    print(task_str)
     step_unit = total_num_steps = num_random_action = 0 #variables that vary based on task
     if("7" in task): #check if running abac task
         print("Using learning parameters for Task 7: ABAC")
@@ -150,6 +155,11 @@ def get_params_office_world(experiment):
         print("Using learning parameters for Task 9: BCABCA")
         step_unit = 800
         total_num_steps = int(2e6)
+        num_random_action = 2e5
+    elif("10" in task_str):
+        print("Using learning parameters for Task 10: CBABCA")
+        step_unit = 800
+        total_num_steps = int(6e6)
         num_random_action = 2e5
     else:
         print("Default Learning params being used: Not parameters used in experiments in research paper")
@@ -180,11 +190,6 @@ def get_params_office_world(experiment):
     learning_params.batch_size = 1
     learning_params.target_network_update_freq = 100  # obs: 500 makes learning more stable, but slower
     learning_params.learning_starts = 10
-    #add the learning_params that rodrigo used
-    learning_params.set_rm_learning(rm_init_steps=num_random_action, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,rm_lr_steps=100, rm_workers=16)
-    learning_params.set_rl_parameters(gamma=0.9, train_steps=None, episode_horizon=int(5e3), epsilon=0.1, max_learning_steps=None)
-    learning_params.set_test_parameters(test_freq = testing_params.test_freq,test_epi_length=testing_params.num_steps)
-    learning_params.set_deep_rl(lr = 5e-5, learning_starts = 50000, train_freq = 1, target_network_update_freq = 100,buffer_size = 100000, batch_size = 32, use_double_dqn = True, num_hidden_layers = 5, num_neurons = 64)
 
     # Tabular case
     learning_params.tabular_case = False  
@@ -221,7 +226,7 @@ def get_params_office_world(experiment):
 def run_experiment(world, alg_name, experiment_known, experiment_learned, num_times, show_print, show_plots, is_SAT,num_trials):
     """The Below code was commented out, as it is a left over from JIRP. Only code that runs LRM is uncommented"""
 
-    if alg_name == "lrm-qrm" or alg_name == "lrm-dqn":
+    if alg_name == "lrm-qrm" or alg_name == "lrm-dqn": #code for running LRM
         rl = alg_name
         #determine environment: only for LRM setup
         if "active" in world:
@@ -240,12 +245,12 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
         tester_l = None #pycharm won't complie w/out this: "variable referenced before assignment" error
         curriculum = None
         if world == 'officeworld' or "office" in world:
-            testing_params_k, learning_params_k, tester, curriculum_k = get_params_office_world(experiment_known)
-            testing_params, learning_params, tester_l, curriculum = get_params_office_world(experiment_learned)
+            testing_params_k, learning_params_k, tester, curriculum_k = get_params_office_world(experiment_known,experiment_known)
+            testing_params, learning_params, tester_l, curriculum = get_params_office_world(experiment_learned,experiment_known)
             ## allows for 2 sets of testers/curricula: one for previously known (ground truth) and one for learned info
         if world == 'craftworld':
-            testing_params_k, learning_params_k, tester, curriculum_k = get_params_craft_world(experiment_known)
-            testing_params, learning_params, tester_l, curriculum = get_params_craft_world(experiment_learned)
+            testing_params_k, learning_params_k, tester, curriculum_k = get_params_craft_world(experiment_known,experiment_known)
+            testing_params, learning_params, tester_l, curriculum = get_params_office_world(experiment_learned,experiment_known)
         if world == 'trafficworld':
             testing_params_k, learning_params_k, tester, curriculum_k = get_params_traffic_world(experiment_known)
             testing_params, learning_params, tester_l, curriculum = get_params_traffic_world(experiment_learned)
@@ -305,6 +310,12 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
             test_epi_length = 800
             total_train_step = int(2e6)
             num_random_action = int(2e5)
+        elif("10" in task_str):
+            print("Using learning parameters for OFFICE Task 10: CBABCA")
+            test_freq = 800
+            test_epi_length = 800
+            total_train_step = int(6e6)
+            num_random_action = int(2e5)
         else:
             print("Default Learning params being used: Not parameters used in experiments in research paper")
             test_freq = 200
@@ -325,6 +336,12 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
             test_epi_length = 600
             total_train_step = int(6e5)
             num_random_action = int(12e4)
+        elif("6" in task_str):
+            print("Using learning parameters for CRAFT Task 6: Sword and Shield")
+            test_freq = 800
+            test_epi_length = 800
+            total_train_step = int(6e6)
+            num_random_action = int(2e5)
         else:
             print("Default Learning params being used: Not parameters used in experiments in research paper")
             test_freq = 200
@@ -344,11 +361,8 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
     if save: print("SAVING RESULTS!")
     else:    print("*NOT* SAVING RESULTS!")
 
-
-
-
     # Setting the learning parameters
-    lp = LearningParameters()
+    lp = Rod_LearningParameters()
     #below we allow the agent to explore the environment for 2e5 steps before we start training
     lp.set_rm_learning(rm_init_steps=num_random_action, rm_u_max=10, rm_preprocess=True, rm_tabu_size=10000,
                        rm_lr_steps=100, rm_workers=n_workers)
@@ -391,8 +405,7 @@ if __name__ == "__main__":
     algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
     #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
 
-    """For now only office world/office world active will work with LRM"""
-    worlds = ["office","office_active", "craft", "traffic"]
+    worlds = ["office_active", "craft", "traffic"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
@@ -429,6 +442,7 @@ if __name__ == "__main__":
     show_plots = (int(args.show_plots) == 1)
     is_SAT = (int(args.is_SAT) == 1)
     """The following if statements set variables that do not matter for running LRM (these variables are not passed into the LRM algorithm)"""
+    """This variables set the location for hypothesis and test reward machine files"""
     if world == "office" or "office" in world:
         experiment_l = "../experiments/office/tests/hypothesis_machines.txt"
         experiment_t = "../experiments/office/tests/ground_truth.txt"
@@ -450,7 +464,6 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = ["debug"]
+    num_trials = range(num_times)
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)
-  

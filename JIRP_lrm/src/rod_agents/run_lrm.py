@@ -29,7 +29,7 @@ def run_lrm(env_params, lp, rl):
     Returns the training rewards
     """
     # Initializing parameters and the game
-    env = Game(env_params,label="train")
+    env = Game(env_params,label="train")#ignore label = "Train". Is legacy from debugging technique used.
     rm = RewardMachine(lp.rm_u_max, lp.rm_preprocess, lp.rm_tabu_size, lp.rm_workers, lp.rm_lr_steps, env.get_perfect_rm(), lp.use_perfect_rm)
     actions = env.get_actions()
     policy = None
