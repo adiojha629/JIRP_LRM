@@ -11,8 +11,8 @@ from tester.tester_params import TestingParameters
 from common.curriculum import CurriculumLearner
 from rod_agents.learning_parameters import LearningParameters as Rod_LearningParameters
 from qrm.learning_params import LearningParameters
-#from rod_agents.run_lrm import run_lrm_experiments
-from run_lrm import run_lrm_experiments
+from rod_agents.run_lrm import run_lrm_experiments
+#from run_lrm import run_lrm_experiments
 from worlds.game import GameParams
 from worlds.grid_world import GridWorldParams
 def get_params_craft_world(experiment,experiment_known):
@@ -464,6 +464,6 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = range(num_times)
+    num_trials = [1,2,3,4,5,6,7,8,9]
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)
