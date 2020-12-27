@@ -1,0 +1,12 @@
+.idea
+**/__pycache__
+tmp/
+venv/
+**.pyc
+**.DS_Store
+**.pyc
+**.a
+**.so
+**.svn
+**.o
+src/automata_learning_utils/lib/installation/

@@ -1,0 +1,12 @@
+[general]
+	is dfa = true;
+	alphabet size = 3;
+	number of states = 1;
+[initial states]
+	0;
+[final states]
+
+[transitions]
+	0, 0, 0;
+	0, 1, 0;
+	0, 2, 0;
