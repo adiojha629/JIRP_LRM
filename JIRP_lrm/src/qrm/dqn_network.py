@@ -1,6 +1,6 @@
-#import tensorflow as tf
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+import tensorflow as tf
+#import tensorflow.compat.v1 as tf
+#tf.disable_v2_behavior()
 def create_net(x, num_input, num_output, num_neurons, num_hidden_layers):
     weights = []
     for i in range(num_hidden_layers):

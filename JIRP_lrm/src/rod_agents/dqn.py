@@ -1,6 +1,7 @@
 import numpy as np
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+#import tensorflow.compat.v1 as tf
+#tf.disable_v2_behavior()
+import tensorflow as tf
 from rod_agents.rl import RL
 from rod_agents.dqn_network import create_net, create_target_updates
 from rod_agents.dqn_buffer import ReplayBuffer, PrioritizedReplayBuffer

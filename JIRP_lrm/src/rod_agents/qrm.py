@@ -1,5 +1,6 @@
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+#import tensorflow.compat.v1 as tf
+#tf.disable_v2_behavior()
+import tensorflow as tf
 import os.path, time, random
 import numpy as np
 from rod_agents.rl import RL
