@@ -171,5 +171,7 @@ def plot_LRM(task):
     #plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'Active'+task_label+' task')
     return 0
 if __name__ == '__main__':
-    plot_LRM("t7")
-    #plot_active('t6')
+    #plot_JIRP("t7")
+    #plot_JIRP("t9")
+    #plot_JIRP('10')
+    plot_active('t6')
