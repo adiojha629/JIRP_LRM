@@ -28,10 +28,12 @@ def plot_performance(steps,p25,p50,p75,title,algo,total_time): #this is the func
         color = 'red'
     elif(algo == 'AFRAI-RL'):
         color = 'green'
+    elif(algo == 'JIRP'):
+        color = 'blue'
     ax.plot(steps, p50, color=color,label = algo) #put the 50th percentile in black
     ax.plot(steps, p75, alpha=0)
     ax.grid()
-    ax.legend(fontsize = 15,loc='center right')
+    ax.legend(fontsize = 20,loc='lower right')
     plt.fill_between(steps, p50, p25, color='dark'+color, alpha=0.25)#fill in area between p50 and p25
     plt.fill_between(steps, p50, p75, color='dark'+color, alpha=0.25)#fill in area between p50 p75
     #plt.title(title)
@@ -43,7 +45,7 @@ def plot_performance(steps,p25,p50,p75,title,algo,total_time): #this is the func
         plt.xticks([0,250000,500000,750000,1000000],["0","250000","500000","750000","1000000"])
     else: #assume 2e6
         plt.xticks([0,500000,1000000,1500000,2000000],["0","500000","1000000","1500000","2000000"])
-    plt.tick_params(axis = 'both', which = 'major',labelsize = 15)
+    plt.tick_params(axis = 'both', which = 'major',labelsize = 20)
     #loc = plticker.MultipleLocator(base=.1) # this locator puts ticks at regular intervals
     #ax.yaxis.set_major_locator(loc)
     plt.show()
@@ -107,17 +109,74 @@ def Cal_Percentiles(plot_dict):
 
 
 ##Function Name: plot_active
-##inputs: none
+##inputs: task: the task whose performance one wishes to view
 ##outputs: 0
 ##Plots the graphs for the Active Learning Algorithm
 def plot_active(task):
     ##Get data
+    file = None #set below
+    task_label = None
+    test_freq = None
+    total_time = None
     if(task == 't6'):
         file = "../results/active/Sword_Shield/craftworldt6aqrm.csv"
-    else:
+    elif(task == 't10' or task.lower() == 'cbabca'):
         file = "../results/active/cbabca_office&craft/officeworld10aqrm_800_6e6.csv" ##file name
+        task_label = 'cbabca'
+        test_freq = 800
+        total_time = int(6e6)
+    elif(task == 't9' or task.lower() == 'bcabca'):
+        file = "../results/active/office_bcabca/officeworld9aqrm.csv"
+        task_label = 'bcabca'
+        test_freq = 800
+        total_time = int(2e6)
+    elif(task == 't7' or task.lower() == 'abac'):
+        file = "../results/active/office_abac/officeworld7aqrm.csv"
+        task_label = 'abac'
+        test_freq = 200
+        total_time = int(1e6)
     plot_dict = {}
-    test_freq = 800
+    counter = 0
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file)
+        for step in reader:
+            if(counter <= total_time): #in case trail was 4e6, but we only want the first 2e6 steps
+                values = [float(value) for value in step]
+                counter+=test_freq
+                plot_dict[counter] = values
+    ##Calculate Percentiles
+    steps_plot,prc_25,prc_50,prc_75,rewards_plot = Cal_Percentiles(plot_dict)
+    ##Plot data
+    print("now plotting AFRAI-RL "+str(task_label))
+    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'AFRAI-RL',total_time=total_time)
+    #plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'Active'+task_label+' task')
+    return 0
+##Function Name: plot_JIRP
+##inputs: task: the task whose performance one wishes to view
+##outputs: 0
+##Plots the graphs for the JIRP  Algorithm
+def plot_JIRP(task):
+    ##Get data
+    test_freq = None #set below
+    file = None
+    task_label = None
+    total_time = None
+    if(task == 't7' or task.lower() == "abac"):
+        file = "../results/JIRP/Office_abac/officeworld7jirpsat.csv"
+        test_freq = 200
+        task_label = 'abac'
+        total_time = int(1e6)
+    elif(task == 't9' or task.lower() == "bcabca"):
+        file = "../results/JIRP/office_bacbac/officeworld9jirpsat.csv" ##file name
+        test_freq = 800
+        task_label = 'bcabca'
+        total_time = int(2e6)
+    elif(task == 't10' or task.lower() == "cbabca"):
+        file = "../results/JIRP/office_cbabca/officeworld10jirpsat_800_6e6.csv"
+        test_freq = 800
+        task_label = 'cbabca'
+        total_time = int(6e6)
+    plot_dict = {}
     counter = 0
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
@@ -128,33 +187,37 @@ def plot_active(task):
     ##Calculate Percentiles
     steps_plot,prc_25,prc_50,prc_75,rewards_plot = Cal_Percentiles(plot_dict)
     ##Plot data
-    print("now plotting")
-    task_label = "cbabca"
-    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'AFRAI-RL')
+    print("now plotting: JIRP "+str(task_label))
+    plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'JIRP',total_time = total_time)
     #plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'Active'+task_label+' task')
     return 0
+
 ##Function Name: plot_LRM
-##inputs: none
+##inputs: task: the task whose performance one wishes to view
 ##outputs: 0
 ##Plots the graphs for the LRM  Algorithm
 def plot_LRM(task):
     ##Get data
     file = None #file name
     test_freq = None #testing frequency
-    if(task == "t9"):
+    total_time = None
+    task_label = None
+    if(task == "t9" or task.lower() == "bcabca"):
         file = "../results/LRM/lrm-qrm/"+"officeworld_active"+"/task_"+"t9"+"/plot_data/LRM_officeworld_active_t9.csv" ##file name
         test_freq = 800
         total_time = int(2e6)
-    elif(task == "t7"):
+        task_label = "bcabca"
+    elif(task == "t7" or task.lower() == "abac"):
         file = "../results/LRM/lrm-qrm/officeworld_active/task_t7/plot_data/LRM_officeworld_active_t7.csv"
         test_freq = 200
         total_time = int(1e6)
-    else:
+        task_label = "abac"
+    elif(task == 't10' or task.lower() == "cbabca"):
         file = "../results/LRM/lrm-qrm/"+"officeworld_active"+"/task_"+"10"+"/plot_data/LRM_officeworld_active_10.csv" ##file name
         test_freq = 800
         total_time = int(6e6)
+        task_label = "cbabca"
     plot_dict = {}
-
     counter = 0
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
@@ -165,13 +228,15 @@ def plot_LRM(task):
     ##Calculate Percentiles
     steps_plot,prc_25,prc_50,prc_75,rewards_plot = Cal_Percentiles(plot_dict)
     ##Plot data
-    print("now plotting")
-    task_label = "cbabca"
+    print("now plotting LRM "+task_label)
+
     plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM',total_time=total_time)
     #plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'Active'+task_label+' task')
     return 0
 if __name__ == '__main__':
-    #plot_JIRP("t7")
-    #plot_JIRP("t9")
-    #plot_JIRP('10')
-    plot_active('t6')
+    tasks = ['t7','t9','t10']
+    for task in tasks:
+        #plot_JIRP(task)
+        plot_LRM(task)
+        #plot_active(task)
+    #plot_active('t6')
