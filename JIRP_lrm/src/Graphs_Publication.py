@@ -33,7 +33,7 @@ def plot_performance(steps,p25,p50,p75,title,algo,total_time): #this is the func
     ax.plot(steps, p50, color=color,label = algo) #put the 50th percentile in black
     ax.plot(steps, p75, alpha=0)
     ax.grid()
-    ax.legend(fontsize = 20,loc='lower right')
+    ax.legend(fontsize = 20,loc='center right')
     plt.fill_between(steps, p50, p25, color='dark'+color, alpha=0.25)#fill in area between p50 and p25
     plt.fill_between(steps, p50, p75, color='dark'+color, alpha=0.25)#fill in area between p50 p75
     #plt.title(title)
@@ -236,7 +236,7 @@ def plot_LRM(task):
 if __name__ == '__main__':
     tasks = ['t7','t9','t10']
     for task in tasks:
-        #plot_JIRP(task)
-        plot_LRM(task)
+        plot_JIRP(task)
+        #plot_LRM(task)
         #plot_active(task)
     #plot_active('t6')
