@@ -394,6 +394,9 @@ def _remove_files_from_folder(relative_path):
     if os.path.isdir(parent_folder):
         for filename in os.listdir(parent_folder):
             absPath = os.path.join(parent_folder, filename)
+            #for 1.6.2020 debugging
+            #print(str(absPath))
+            #adi = input("wait")
             subprocess.run(["rm", absPath])
     else:
         print("There is no directory {}".format(parent_folder))
