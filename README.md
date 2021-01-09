@@ -16,11 +16,11 @@ Tensorflow Version 1 will cause errors.
 # How to run examples
 ## AFRAI-RL
 In a command line, navigate to *JIRP_LRM/active16/src*. Use this command
-``` python3 run1.py -W ```
+``` python3 run1.py -W ignore```
 
 ## JIRP-SAT
 In a command line, navigate to *JIRP_LRM/JIRP_code/src*. Use this command
-``` python3 run1.py -W ```
+``` python3 run1.py -W ignore```
 ## LRM-QRM
 In a command line, navigate to *JIRP_LRM/JIRP_LRM/src*. Use this command
-``` python3 run1.py -W ```
+``` python3 run1.py -W ignore```
