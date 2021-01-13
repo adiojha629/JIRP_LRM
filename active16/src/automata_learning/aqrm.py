@@ -271,25 +271,25 @@ def run_aqrm_task(sess, epsilon, environment_rm_file, learned_rm_file, policy_ba
         s1, s1_features, u1 = s2, s2_features, u2
         u1_true = u2_true
 
-    if rm_true.is_terminal_state(u2_true):
-        checker = rm_learned.is_terminal_state(u2)
+        if rm_true.is_terminal_state(u2_true):
+            checker = rm_learned.is_terminal_state(u2)
 
-    if (not rm_learned.is_terminal_state(u2)) and (not rm_true.is_terminal_state(u2_true)):
-        is_conflicting = 0
-    elif (rm_learned.is_terminal_state(u2) and rm_true.is_terminal_state(u2_true)):
-        is_conflicting = 0
-    else:
-        is_conflicting = 1
+        if (not rm_learned.is_terminal_state(u2)) and (not rm_true.is_terminal_state(u2_true)):
+            is_conflicting = 0
+        elif (rm_learned.is_terminal_state(u2) and rm_true.is_terminal_state(u2_true)):
+            is_conflicting = 0
+        else:
+            is_conflicting = 1
 
-    step_count = t
+        step_count = t
 
-    if testing_reward is None:
-        is_test_result = 0
-        testing_reward = previous_testing_reward
-    else:
-        is_test_result = 1
+        if testing_reward is None:
+            is_test_result = 0
+            testing_reward = previous_testing_reward
+        else:
+            is_test_result = 1
 
-    if show_print: print("Done! Total reward:", training_reward)
+        if show_print: print("Done! Total reward:", training_reward)
 
     return all_events, training_reward, step_count, is_conflicting, testing_reward, is_test_result, q
 

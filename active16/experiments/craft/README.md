@@ -6,9 +6,9 @@ The 'map' folder contains one standard map. Each grid position might contain a r
 - 'X' is a wall
 - 'a' is a tree or wood
 - 'b' is a string
-- 'c' is a stone
+- 'c' is a factory or workbench (a place where player assembles parts)
 - 'd' is grass
-- 'e' is a factory or workbench (a place where player assembles parts)
+- 'e' is a piece of stone
 - 'f' is iron
 - 'g' is gold
 - 'h' is gem
@@ -21,8 +21,8 @@ The 'options' folder is only used by the Hierarchical RL baselines. It defines a
 <br>Note, that t1 to t5.txt are left as legacy from the Andreas paper mentioned above. t6 and onwards, were created for the Active Learning paper.<br>
 <br> Note, we have changed the meaning of some symbols from their original definitions for the Active Learning Paper
 <br> Below, we detail what each task means:<br>
-t6.txt: Build a sword and shield. For Sword get wood (a) then iron (f) and make the sword at the workbench (e).
-Then get wood (a) and stone (c) and make the shield at the workbench(e)<br>
-t8.txt: Build a bridge. Get wood(a), then stone(c), then iron(f) and go to a workbench (e)<br>
+t8.txt: Build a hammer. Get string (b),stone (e),iron(f), stone, and assemble in factory(c)<br>
+t11.txt: Build a spear. Get stone, string, wood(a), iron, and assemble in factory.
+
 
 

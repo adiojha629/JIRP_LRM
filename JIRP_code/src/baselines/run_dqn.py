@@ -4,11 +4,11 @@ import numpy as np
 #import tensorflow as tf
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from src.worlds.game import *
-from src.tester.saver import Saver
-from src.common.schedules import LinearSchedule
-from src.baselines.policy_bank import PolicyBank
-from src.reward_machines.reward_machine import RewardMachine
+from worlds.game import *
+from tester.saver import Saver
+from common.schedules import LinearSchedule
+from baselines.policy_bank import PolicyBank
+from reward_machines.reward_machine import RewardMachine
 from matplotlib import pyplot as plt
 def run_dqn_baseline(sess, rm_file, policy_bank, tester, curriculum, show_print, previous_test):
     """

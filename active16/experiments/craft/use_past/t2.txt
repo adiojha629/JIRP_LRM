@@ -1,2 +1,4 @@
 0 # initial state
-(0,0,'a',ConstantRewardFunction(0))
+(0,0,'a', ConstantRewardFunction(0))
+(0,0,'b', ConstantRewardFunction(0))
+(0,0,'c', ConstantRewardFunction(0))

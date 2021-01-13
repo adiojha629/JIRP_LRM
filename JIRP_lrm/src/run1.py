@@ -12,6 +12,7 @@ from common.curriculum import CurriculumLearner
 from rod_agents.learning_parameters import LearningParameters as Rod_LearningParameters
 from qrm.learning_params import LearningParameters
 from rod_agents.run_lrm import run_lrm_experiments
+import numpy as np
 #from run_lrm import run_lrm_experiments
 from worlds.game import GameParams
 from worlds.grid_world import GridWorldParams
@@ -337,11 +338,23 @@ def run_lrm_agent(rl, env, n_seed, n_workers,num_trails,experiment):
             total_train_step = int(6e5)
             num_random_action = int(12e4)
         elif("6" in task_str):
-            print("Using learning parameters for CRAFT Task 6: Sword and Shield")
-            test_freq = 800
-            test_epi_length = 800
-            total_train_step = int(6e6)
-            num_random_action = int(2e5)
+            print("Using learning parameters for CRAFT Task 6: Sword")
+            test_freq = 400
+            test_epi_length = 400
+            total_train_step = int(4e5)
+            num_random_action = int(8e4)
+        elif("8" in task_str):
+            print("Using learning parameters for CRAFT Task 8: BEFEC")
+            test_freq = 400
+            test_epi_length = 400
+            total_train_step = int(4e5)
+            num_random_action = int(8e4)
+        elif("11" in task_str):
+            print("Using learning parameters for CRAFT Task 11: BEABC Spear")
+            test_freq = 400
+            test_epi_length = 400
+            total_train_step = int(25e4)
+            num_random_action = int(5e4)
         else:
             print("Default Learning params being used: Not parameters used in experiments in research paper")
             test_freq = 200
@@ -464,6 +477,6 @@ if __name__ == "__main__":
     world += "world"
 
 
-    num_trials = [1,2,3,4,5,6,7,8,9]
+    num_trials = range(num_times)
     print("world: " + world, "alg_name: " + alg_name, "experiment: " + experiment_l, "num_times: " + str(num_times), show_print)
     run_experiment(world, alg_name, experiment_t, experiment_l, num_times, show_print, show_plots, is_SAT,num_trials)

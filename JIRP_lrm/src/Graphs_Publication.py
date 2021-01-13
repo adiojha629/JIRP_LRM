@@ -33,7 +33,7 @@ def plot_performance(steps,p25,p50,p75,title,algo,total_time): #this is the func
     ax.plot(steps, p50, color=color,label = algo) #put the 50th percentile in black
     ax.plot(steps, p75, alpha=0)
     ax.grid()
-    ax.legend(fontsize = 20,loc='lower right')
+    ax.legend(fontsize = 20,loc='center right')
     plt.fill_between(steps, p50, p25, color='dark'+color, alpha=0.25)#fill in area between p50 and p25
     plt.fill_between(steps, p50, p75, color='dark'+color, alpha=0.25)#fill in area between p50 p75
     #plt.title(title)
@@ -43,11 +43,19 @@ def plot_performance(steps,p25,p50,p75,title,algo,total_time): #this is the func
         plt.xticks([0,2000000,4000000,6000000],["0","2000000","4000000","6000000"]) ##get axis labels correct Dec. 5th 20:21
     elif(total_time == 1000000):
         plt.xticks([0,250000,500000,750000,1000000],["0","250000","500000","750000","1000000"])
+        plt.xlim(0,int(1e6))
+    elif(total_time == 400000):
+        plt.xticks([0,100000,200000,300000,400000],["0","100000","200000","300000","400000"])
+        plt.xlim(0,int(4e5))
+    elif(total_time == 250000):
+        plt.xticks([0,50000,100000,150000,200000,250000],["0","10000","100000","150000","200000","250000"])
+        plt.xlim(0,int(25e4))
     else: #assume 2e6
         plt.xticks([0,500000,1000000,1500000,2000000],["0","500000","1000000","1500000","2000000"])
     plt.tick_params(axis = 'both', which = 'major',labelsize = 20)
     #loc = plticker.MultipleLocator(base=.1) # this locator puts ticks at regular intervals
     #ax.yaxis.set_major_locator(loc)
+    plt.ylim(-0.05,1.05)
     plt.show()
 
 ##Function Name: plot_this
@@ -135,6 +143,16 @@ def plot_active(task):
         task_label = 'abac'
         test_freq = 200
         total_time = int(1e6)
+    elif(task == 't11' or task.lower() == 'spear'):
+        file = "../results/active/craft_spear/craftworld11aqrm.csv"
+        task_label = 'spear'
+        test_freq = 400
+        total_time = int(25e4)
+    elif(task == 't8' or task.lower() == 'hammer'):
+        file = "../results/active/craft_hammer/craftworldt8aqrm.csv"
+        task_label = 'hammer'
+        test_freq = 400
+        total_time = int(4e5)
     plot_dict = {}
     counter = 0
     with open(file) as csv_file:
@@ -176,6 +194,16 @@ def plot_JIRP(task):
         test_freq = 800
         task_label = 'cbabca'
         total_time = int(6e6)
+    elif(task == 't11' or task.lower() == "spear"):
+        file = "../results/JIRP/craft_spear/craftworld11jirpsat.csv"
+        test_freq = 400
+        task_label = 'spear'
+        total_time = int(25e4)
+    elif(task == 't8' or task.lower() == "hammer"):
+        file = "../results/JIRP/craft_hammer/craftworld8jirpsat.csv"
+        test_freq = 400
+        task_label = 'hammer'
+        total_time = int(4e5)
     plot_dict = {}
     counter = 0
     with open(file) as csv_file:
@@ -217,6 +245,16 @@ def plot_LRM(task):
         test_freq = 800
         total_time = int(6e6)
         task_label = "cbabca"
+    elif(task == 't11' or task.lower() == "spear"):
+        file = "../results/LRM/lrm-qrm/craftworld/task_t11/plot_data/LRM_craftworld_t11.csv"
+        test_freq = 400
+        task_label = 'spear'
+        total_time = int(25e4)
+    elif(task == 't8' or task.lower() == "hammer"):
+        file = "../results/LRM/lrm-qrm/craftworld/task_t8/plot_data/LRM_craftworld_t8.csv"
+        test_freq = 400
+        task_label = 'hammer'
+        total_time = int(4e5)
     plot_dict = {}
     counter = 0
     with open(file) as csv_file:
@@ -233,10 +271,18 @@ def plot_LRM(task):
     plot_performance(steps_plot,prc_25,prc_50,prc_75,"Rewards vs. Time Step",'LRM',total_time=total_time)
     #plot_this(steps_plot,rewards_plot,"Average Reward vs. Time Step",'Active'+task_label+' task')
     return 0
+
+
+#Main
 if __name__ == '__main__':
-    tasks = ['t7','t9','t10']
-    for task in tasks:
-        #plot_JIRP(task)
+    offie_tasks = ['t7','t9','t10']
+    craft_tasks = ['t8','t11']
+    for task in craft_tasks:
         plot_LRM(task)
+        plot_JIRP(task)
+        plot_active(task)
+    #for task in tasks:
+        #plot_JIRP(task)
+        #plot_LRM(task)
         #plot_active(task)
     #plot_active('t6')

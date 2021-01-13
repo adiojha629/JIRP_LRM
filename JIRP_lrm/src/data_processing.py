@@ -97,7 +97,7 @@ if __name__ == "__main__":
         #for loop here
         print("Putting Data into Plot_dict")
         for trial in range(10):
-            file_name = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(trial+1)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
+            file_name = "../results/LRM/lrm-qrm/"+world+"/task_"+task+"/trail_"+str(trial)+"/lrm-lrm-qrm-0_rewards_over_time.txt"
             file = open(file_name)
             lines = file.readlines()
             file.close()

@@ -186,13 +186,17 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
             step_unit = 600
             total_num_steps = int(6e5)
         elif("6" in task):
-            print("Running Sword and Shield Task")
-            step_unit = 800
-            total_num_steps = int(6e6)
+            print("Running Sword Task")
+            step_unit = 400
+            total_num_steps = int(4e5)
         elif("8" in task):
-            print("Running Bridge Task")
-            step_unit = 800
-            total_num_steps = int(4e6)
+            print("Running BEFEC: Hammer Task")
+            step_unit = 400
+            total_num_steps = int(4e5)
+        elif("11" in task):
+            print("Running : BEABC Spear Task")
+            step_unit = 400
+            total_num_steps = int(25e4)
         else:
             print("Default Learning params being used: Not parameters used in experiments in research paper")
             step_unit = 600
