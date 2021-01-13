@@ -283,6 +283,10 @@ if __name__ == '__main__':
         plot_active(task)
     #for task in tasks:
         #plot_JIRP(task)
+
+    tasks = ['t7','t9','t10']
+    for task in tasks:
+        plot_JIRP(task)
         #plot_LRM(task)
         #plot_active(task)
     #plot_active('t6')
