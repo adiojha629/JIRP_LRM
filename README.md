@@ -22,10 +22,10 @@ Tensorflow Version 1 will cause errors.
 In a command line, navigate to *JIRP_LRM/active16/src*. Use this command:<br>
 ``` python3 run1.py --algorithm="aqrm" --world=<environment> --map=0 --num_times=<number of trials> ``` 
 ## JIRP-SAT
-In a command line, navigate to *JIRP_LRM/JIRP_code/src*. Use this command
+In a command line, navigate to *JIRP_LRM/JIRP_code/src*. Use this command:<br>
 ``` python3 run1.py --algorithm="jirp" --world=<environment> --map=0 --num_times=<number of trials> ``` 
 ## LRM-QRM
-In a command line, navigate to *JIRP_LRM/JIRP_lrm/src*. Use this command
+In a command line, navigate to *JIRP_LRM/JIRP_lrm/src*. Use this command:<br>
 ``` python3 run1.py --algorithm="lrm-qrm" --world=<environment> --map=0 --num_times=<number of trials> ``` 
 <br><br>
 The ```run1.py``` code receives 4 parameters: The RL algorithm to use (which might be "aqrm", "jirp", or "lrm-qrm", the first and second of which are our methods), the environment (which might be "office", "craft", or "traffic"), the map (which is integer 0), and the number of independent trials to run per map.
