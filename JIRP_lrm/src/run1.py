@@ -230,9 +230,7 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
     if alg_name == "lrm-qrm" or alg_name == "lrm-dqn": #code for running LRM
         rl = alg_name
         #determine environment: only for LRM setup
-        if "active" in world:
-            env = "officeworld_active"
-        elif "craft" in world:
+        if "craft" in world:
             env = "craftworld"
         elif "office" in world:
             env = "officeworld_active"
@@ -418,7 +416,7 @@ if __name__ == "__main__":
     algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
     #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
 
-    worlds = ["office_active", "craft", "traffic","office"]
+    worlds = ["craft", "traffic","office"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
