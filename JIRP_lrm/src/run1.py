@@ -235,7 +235,7 @@ def run_experiment(world, alg_name, experiment_known, experiment_learned, num_ti
         elif "craft" in world:
             env = "craftworld"
         elif "office" in world:
-            env = "office_world"
+            env = "officeworld_active"
         else:
             print(world + " is not supportted at this time")
         n_seed = 0
@@ -418,7 +418,7 @@ if __name__ == "__main__":
     algorithms = ["hrl", "jirp", "qlearning", "ddqn",'lrm-qrm','lrm-dqn']
     #lrm is Rodrigo's method. The qrm or dqn specifies how policies are learned in each state of the reward machine
 
-    worlds = ["office_active", "craft", "traffic"]
+    worlds = ["office_active", "craft", "traffic","office"]
 
     parser = argparse.ArgumentParser(prog="run_experiments", description='Runs a multi-task RL experiment over a particular environment.')
 
