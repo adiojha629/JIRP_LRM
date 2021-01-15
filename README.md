@@ -27,8 +27,10 @@ In a command line, navigate to *JIRP_LRM/JIRP_code/src*. Use this command
 ## LRM-QRM
 In a command line, navigate to *JIRP_LRM/JIRP_lrm/src*. Use this command
 ``` python3 run1.py --algorithm="lrm-qrm" --world=<environment> --map=0 --num_times=<number of trials> ``` 
+<br><br>
 The ```run1.py``` code receives 4 parameters: The RL algorithm to use (which might be "aqrm", "jirp", or "lrm-qrm", the first and second of which are our methods), the environment (which might be "office", "craft", or "traffic"), the map (which is integer 0), and the number of independent trials to run per map.
 <br>
+## Change the Task
 In order to change the task being performed, move to the corresponding folder from the *experiments* folder and change the task index specified in the ground truth file found in the *tests* folder. For example, in order to run task 2 from the craft world, set the index (on line 2) between the square brackets as indicated in 'experiments/craft/tests/ground_truth.txt' before running *run1.py*:
 
     ["../experiments/craft/reward_machines/t%d.txt"%i for i in [2]]  # tasks
